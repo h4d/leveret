@@ -14,13 +14,11 @@
       "email": "miguel.mailbox@gmail.com"
     }
   ],
-  "minimum-stability": "dev",
-  "prefer-stable": true,
   "require": {
     "php": ">=5.5.9",
     "psr/log": "~1.0",
     "symfony/validator": "~2.3",
-    "h4d/template": "dev-master"
+    "h4d/template": "@dev"
   },
   "require-dev": {
   },
