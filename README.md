@@ -10,6 +10,30 @@ Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al e
             });
     $app->run();
 
+## ¿Cómo se instala?
+
+Para instalar leveret vía composer debes añadir estos datos a tu fichero composer.json:
+
+    {
+      "minimum-stability": "dev",
+      "prefer-stable": true,
+      "require": {
+        "h4d/leveret": "dev-master"
+      },
+      "repositories": [
+        {
+          "type": "vcs",
+          "url": "http://dev.edusalguero.com/h4d/leveret.git"
+        },
+        {
+          "type": "vcs",
+          "url": "http://dev.edusalguero.com/h4d/template.git"
+        }
+      ]
+    }
+
+__NOTA:__ Es necesario incluir todos los datos de los repositorios de las dependecias que están alojadas en repositorios privados. Como __h4d/leveret__ depende del paquete __h4d/template__ es necesario incluir también los datos de ese repositorio (composer no lo "resuelve" de forma automática como en el caso de los paquetes publicados en packagist).
+
 ## ¿Cómo se utiliza?
 
 ### Fichero de configuración
