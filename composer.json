@@ -1,0 +1,34 @@
+{
+  "name": "h4d/leveret",
+  "description": "PHP micro framework for web applications and APIs",
+  "keywords": [
+    "microframework",
+    "framework",
+    "fast",
+    "API"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Miguel Ángel Graña",
+      "email": "miguel.mailbox@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "psr/log": "~1.0",
+    "symfony/validator": "~2.3",
+    "h4d/template": "dev-master"
+  },
+  "require-dev": {
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "http://dev.edusalguero.com/h4d/template.git"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"H4D\\Leveret\\": "src"}
+  }
+}
