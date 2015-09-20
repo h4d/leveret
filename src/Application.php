@@ -590,6 +590,15 @@ class Application
     }
 
     /**
+     * @return $this
+     */
+    public function disableLayout()
+    {
+        $this->layoutTemplateFile = null;
+        return $this;
+    }
+
+    /**
      * @param string $template
      *
      * @return $this

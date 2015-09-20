@@ -236,6 +236,14 @@ class Request
         return ($this->getMethod() == self::METHOD_PUT);
     }
 
+    /**
+     * @return bool
+     */
+    public function isAjaxRequest()
+    {
+        return (!empty($this->rawRequest['HTTP_X_REQUESTED_WITH'])
+                && 'xmlhttprequest' == strtolower($this->rawRequest['HTTP_X_REQUESTED_WITH']));
+    }
 
     /**
      * @return array

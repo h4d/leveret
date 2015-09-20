@@ -181,6 +181,10 @@ class Controller
         $this->getApp()->useLayout($template);
     }
 
+    public function disableLayout()
+    {
+        $this->getApp()->disableLayout();
+    }
     /**
      * @return bool
      */
