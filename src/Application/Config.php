@@ -24,10 +24,6 @@ class Config
     /**
      * @var string
      */
-    protected $logger;
-    /**
-     * @var string
-     */
     protected $errorHandler;
     /**
      * @var string
@@ -43,7 +39,6 @@ class Config
         $this->applicationPath = $data['application']['path'];
         $this->errorHandler = $data['application']['errorHandler'];
         $this->viewsPath = $data['views']['path'];
-        $this->logger = $data['application']['logger'];
         $this->defaultContentType = $data['application']['defaultContentType'];
     }
 
@@ -124,26 +119,6 @@ class Config
         $this->viewsPath = $viewsPath;
         return $this;
     }
-
-    /**
-     * @return string
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * @param string $logger
-     *
-     * @return $this
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-        return $this;
-    }
-
 
     /**
      * @return string
