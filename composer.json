@@ -25,7 +25,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "http://dev.edusalguero.com/h4d/template.git"
+      "url": "git@dev.edusalguero.com:h4d/template.git"
     }
   ],
   "autoload": {
