@@ -15,10 +15,8 @@ Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al e
 Para instalar leveret vía composer debes añadir estos datos a tu fichero composer.json:
 
     {
-      "minimum-stability": "dev",
-      "prefer-stable": true,
       "require": {
-        "h4d/leveret": "dev-master"
+        "h4d/leveret": "^1.0"
       },
       "repositories": [
         {
