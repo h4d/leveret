@@ -20,7 +20,8 @@
     "h4d/template": "^1.0"
   },
   "require-dev": {
-    "h4d/validator": "^1.0"
+    "h4d/validator": "^1.0",
+    "symfony/validator": "~2.3"
   },
   "repositories": [
     {
