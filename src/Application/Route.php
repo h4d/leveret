@@ -503,7 +503,7 @@ class Route
         {
             if (false == $constraint instanceof ConstraintInterface)
             {
-                throw new \Exception('Invalid constraint for param "%s".', $paramName);
+                throw new \Exception(sprintf('Invalid constraint for param "%s".', $paramName));
             }
             $this->requestConstraints[$paramName][] = $constraint;
         }
