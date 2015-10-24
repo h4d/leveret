@@ -15,11 +15,11 @@ use H4D\Leveret\Exception\ViewException;
 use H4D\Leveret\Http\Request;
 use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
+use H4D\Leveret\Validation\ConstraintInterface;
+use H4D\Leveret\Validation\ConstraintValidator;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\ValidatorBuilder;
+
 
 class Application
 {
@@ -612,29 +612,51 @@ class Application
 
     /**
      * @param Request $request
-     * @param array $constraints [Constraint]
+     * @param array $constraints
      *
-     * @return array [ConstraintViolationInterface]
+     * @return array Constraints violation messages
      */
     protected function validateRequest(Request $request = null, array $constraints = null)
     {
         $this->requestConstraintsViolations = array();
 
-        $validator = (new ValidatorBuilder())->getValidator();
-        $requestParams = $request->getParams();
+        $requestParams = array_merge($request->getParams(),
+                                     $request->getQuery(),
+                                     $this->getCurrentRoute()->getNamedParams());
+
         foreach($constraints as $paramName=>$paramsConstraints)
         {
             if (isset($requestParams[$paramName]))
             {
-                /** @var Constraint  $constraint */
-                $violations = $validator->validateValue($requestParams[$paramName], $paramsConstraints);
+                $violations = $this->validateParam($requestParams[$paramName], $paramsConstraints);
                 if (count($violations)>0)
                 {
-                    $this->requestConstraintsViolations[$paramName][] = $violations;
+                    $this->requestConstraintsViolations[$paramName] = $violations;
                 }
             }
         }
         return $this->requestConstraintsViolations;
+    }
+
+    /**
+     * @param mixed $paramValue
+     * @param ConstraintInterface[] $paramsConstraints
+     *
+     * @return array Constraints violation messages
+     */
+    protected function validateParam($paramValue, $paramsConstraints)
+    {
+        $validator = new ConstraintValidator();
+        $violations = [];
+        foreach($paramsConstraints as $paramConstraint)
+        {
+            $isValid = $validator->validate($paramValue, $paramConstraint);
+            if (false == $isValid)
+            {
+                $violations = array_merge($violations, $validator->getConstraintViolations());
+            }
+        }
+        return $violations;
     }
 
     /**
@@ -669,23 +691,7 @@ class Application
      */
     public function getRequestConstraintsViolationMessages()
     {
-        $messasges = array();
-        if (is_array($this->requestConstraintsViolations))
-        {
-            foreach($this->requestConstraintsViolations as $key=>$violations)
-            {
-                /** @var ConstraintViolationList $violationList */
-                foreach($violations as $violationList)
-                {
-                    foreach($violationList as $violation)
-                    {
-                        $messasges[$key][] = $violation->getMessage();
-                    }
-
-                }
-            }
-        }
-        return $messasges;
+        return $this->getRequestConstraintsViolations();
     }
 
     /**

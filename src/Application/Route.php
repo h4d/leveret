@@ -2,7 +2,7 @@
 
 namespace H4D\Leveret\Application;
 
-use Symfony\Component\Validator\Constraint;
+use H4D\Leveret\Validation\ConstraintInterface;
 
 class Route
 {
@@ -491,7 +491,7 @@ class Route
 
     /**
      * @param string $paramName
-     * @param Constraint|array $constraints A Constraint or an array of Constraints
+     * @param ConstraintInterface|ConstraintInterface[] $constraints A Constraint or an array of Constraints
      *
      * @return $this
      * @throws \Exception
@@ -501,13 +501,12 @@ class Route
         $constraints = is_array($constraints) ? $constraints : [$constraints];
         foreach($constraints as $constraint)
         {
-            if (false == $constraint instanceof Constraint)
+            if (false == $constraint instanceof ConstraintInterface)
             {
                 throw new \Exception('Invalid constraint for param "%s".', $paramName);
             }
             $this->requestConstraints[$paramName][] = $constraint;
         }
-
         return $this;
     }
 
