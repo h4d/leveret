@@ -13,7 +13,6 @@ $app->registerRoute('GET', '/hello/:(string)name')
         function ($name) use ($app)
         {
             $isValid = $app->isValidRequest();
-            var_dump($isValid);
             if (!$isValid)
             {
                 throw new \Exception($app->getRequestConstraintsViolationMessagesAsString());
