@@ -17,15 +17,19 @@
   "require": {
     "php": ">=5.5.9",
     "psr/log": "~1.0",
-    "symfony/validator": "~2.3",
     "h4d/template": "^1.0"
   },
   "require-dev": {
+    "h4d/validator": "^1.0"
   },
   "repositories": [
     {
       "type": "vcs",
       "url": "git@dev.edusalguero.com:h4d/template.git"
+    },
+    {
+      "type": "vcs",
+      "url": "git@dev.edusalguero.com:h4d/validator.git"
     }
   ],
   "autoload": {
