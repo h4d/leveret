@@ -148,7 +148,25 @@ En el siguiente ejemplo de añaden varias reglas de validación a los parámetro
                                                     new Length(array('min'=>3, 'max'=>100))])
                   ->useController('AdminController', 'deployRequest');
 
-De momento, las reglas de validación deben ser instancias de __Symfony\Component\Validator\Constraints\Constraint__.
+Las reglas de validación deben ser instancias de clases que cumplan con la interfaz __H4D\Leveret\Validation\ConstraintInterface__. En el caso de necesitar reglas de validación que no cumplan con esa interfaz siempre se puede hacer un adaptador, como por ejemplo  __H4D\Leveret\Validation\Adapters\H4DConstraintAdapter__ que permite utilizar las reglas de validación definidas en el proyecto __h4d/validator__.
+
+En el siguiente ejemplo se muestra el uso de una regla de validación de H4D mediante el uso del adaptador creado para tal efecto:
+
+    $app = new Application();
+    $app->registerRoute('GET', '/hello/:(string)name')
+        ->addRequestConstraints('name', new H4DConstraintAdapter((new Enum())->setOptions(['paco', 'maria'])))
+        ->setAction(
+            function ($name) use ($app)
+            {
+                $isValid = $app->isValidRequest();
+                if (!$isValid)
+                {
+                    throw new \Exception($app->getRequestConstraintsViolationMessagesAsString());
+                }
+                $app->getResponse()->setBody('Hello '.$name);
+            });
+    $app->run();
+
  
 Desde el objeto __Application__ de Leveret se puede obtener información de los resultados de la validación de una petición mediante los siguientes métodos:
 
