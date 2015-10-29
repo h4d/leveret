@@ -365,7 +365,7 @@ class Application
             $controllerName = $route->getControllerClassName();
             if(!class_exists($controllerName))
             {
-                throw new ApplicationException(sprintf('Controller class "%s" do not exist.',
+                throw new ApplicationException(sprintf('Controller class "%s" does not exist.',
                                                        $controllerName));
             }
             $controllerInstancce = new $controllerName($this);
