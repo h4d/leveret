@@ -9,6 +9,7 @@ use H4D\Leveret\Application\Router;
 use H4D\Leveret\Application\View;
 use H4D\Leveret\Exception\ApplicationException;
 use H4D\Leveret\Exception\AuthException;
+use H4D\Leveret\Exception\BadRequestException;
 use H4D\Leveret\Exception\ConfigErrorException;
 use H4D\Leveret\Exception\RouteNotFoundException;
 use H4D\Leveret\Exception\ViewException;
@@ -25,6 +26,10 @@ class Application
 {
     const ENV_PRODUCTION  = 'production';
     const ENV_DEVELOPMENT = 'development';
+
+    const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
+    const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
+    const AUTO_REQUEST_VALIDATION_MODE_VALIDATION_AFTER_AUTH          = 'VALIDATION_AFTER_AUTH';
 
     /**
      * @var Router
@@ -70,6 +75,10 @@ class Application
      * @var array
      */
     protected $requestConstraintsViolations;
+    /**
+     * @var string
+     */
+    protected $autoRequestValidationMode = self::AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION;
     /**
      * @var string
      */
@@ -437,14 +446,41 @@ class Application
         }
     }
 
+    /**
+     * @throws AuthException
+     * @throws BadRequestException
+     */
+    public function authenticateAndValidateRequest()
+    {
+        switch($this->getAutoRequestValidationMode())
+        {
+            case self::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH:
+                $this->validateRequest($this->getRequest(),
+                                       $this->getCurrentRoute()->getRequestConstraints(), true);
+                $this->authenticate();
+                break;
+
+            case self::AUTO_REQUEST_VALIDATION_MODE_VALIDATION_AFTER_AUTH:
+                $this->authenticate();
+                $this->validateRequest($this->getRequest(),
+                                       $this->getCurrentRoute()->getRequestConstraints(), true);
+                break;
+
+            case self::AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION:
+            default:
+                $this->authenticate();
+                break;
+        }
+    }
+
     protected function dispatch()
     {
         $this->resolveRoute();
         $this->getLogger()->info(sprintf('Dispatching route: %s',
                                          $this->getCurrentRoute()->getPattern()),
                                  $this->getCurrentRoute()->getParams());
-        // Authentication
-        $this->authenticate();
+        // Authentication & Request validation
+        $this->authenticateAndValidateRequest();
         // Predispatch
         $this->preDispatchRoute($this->getCurrentRoute());
         // Dispatch
@@ -497,6 +533,11 @@ class Application
         {
             $this->getLogger()->warning($e->getMessage());
             $this->setResponse(Response::createExceptionResponse($e, Status::HTTP_NOT_FOUND));
+        }
+        catch(BadRequestException $e)
+        {
+            $this->getLogger()->warning($e->getMessage());
+            $this->setResponse(Response::createExceptionResponse($e, Status::HTTP_BAD_REQUEST));
         }
         catch(AuthException $e)
         {
@@ -613,10 +654,13 @@ class Application
     /**
      * @param Request $request
      * @param array $constraints
+     * @param bool $throwsExceptions
      *
      * @return array Constraints violation messages
+     * @throws BadRequestException
      */
-    protected function validateRequest(Request $request, array $constraints)
+    protected function validateRequest(Request $request, array $constraints,
+                                       $throwsExceptions = false )
     {
         $this->requestConstraintsViolations = array();
 
@@ -634,6 +678,11 @@ class Application
                     $this->requestConstraintsViolations[$paramName] = $violations;
                 }
             }
+        }
+
+        if(true == $throwsExceptions && count($this->requestConstraintsViolations)>0)
+        {
+            throw new BadRequestException($this->getRequestConstraintsViolationMessagesAsString());
         }
         return $this->requestConstraintsViolations;
     }
@@ -728,6 +777,25 @@ class Application
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAutoRequestValidationMode()
+    {
+        return $this->autoRequestValidationMode;
+    }
+
+    /**
+     * @param string $autoRequestValidationMode
+     *
+     * @return $this
+     */
+    public function setAutoRequestValidationMode($autoRequestValidationMode)
+    {
+        $this->autoRequestValidationMode = $autoRequestValidationMode;
         return $this;
     }
 
