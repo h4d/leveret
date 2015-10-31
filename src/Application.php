@@ -667,14 +667,11 @@ class Application
      */
     public function isValidRequest(Request $request = null, array $constraints = null)
     {
-        if (!is_null($this->getRequestConstraintsViolations()))
-        {
-            $request = is_null($request) ? $this->getRequest() : $request;
-            $constraints = is_null($constraints) ? $this->getCurrentRoute()->getRequestConstraints() : $constraints;
+        $request = is_null($request) ? $this->getRequest() : $request;
+        $constraints = is_null($constraints) ? $this->getCurrentRoute()->getRequestConstraints() : $constraints;
+        $violations = $this->validateRequest($request, $constraints);
 
-            $this->validateRequest($request, $constraints);
-        }
-        return !(count($this->getRequestConstraintsViolations())>0);
+        return !(count($violations)>0);
     }
 
     /**
