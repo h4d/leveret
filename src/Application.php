@@ -616,7 +616,7 @@ class Application
      *
      * @return array Constraints violation messages
      */
-    protected function validateRequest(Request $request = null, array $constraints = null)
+    protected function validateRequest(Request $request, array $constraints)
     {
         $this->requestConstraintsViolations = array();
 
