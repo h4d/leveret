@@ -5,6 +5,7 @@ namespace H4D\Leveret\Validation\Adapters;
 
 use H4D\Leveret\Validation\ConstraintInterface;
 use H4D\Validator\Constraint;
+use H4D\Validator\ConstraintViolation;
 
 class H4DConstraintAdapter implements ConstraintInterface
 {
@@ -26,7 +27,13 @@ class H4DConstraintAdapter implements ConstraintInterface
      */
     public function getViolations()
     {
-        return [$this->h4dContraint->getViolation()->getMessage()];
+        $message = 'Undefined violation!';
+        $violation = $this->h4dContraint->getViolation();
+        if ($violation instanceof ConstraintViolation)
+        {
+            $message = $violation->getMessage();
+        }
+        return [$message];
     }
 
     /**
