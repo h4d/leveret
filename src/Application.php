@@ -29,7 +29,7 @@ class Application
 
     const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
     const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
-    const AUTO_REQUEST_VALIDATION_MODE_VALIDATION_AFTER_AUTH          = 'VALIDATION_AFTER_AUTH';
+    const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
 
     /**
      * @var Router
@@ -460,7 +460,7 @@ class Application
                 $this->authenticate();
                 break;
 
-            case self::AUTO_REQUEST_VALIDATION_MODE_VALIDATION_AFTER_AUTH:
+            case self::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH:
                 $this->authenticate();
                 $this->validateRequest($this->getRequest(),
                                        $this->getCurrentRoute()->getRequestConstraints(), true);
