@@ -118,7 +118,7 @@ class Application
     {
         // Set error handler
         $errorHandler = $this->config->getErrorHandler();
-        set_error_handler(array(get_class(), $errorHandler));
+        set_error_handler(array(get_class($this), $errorHandler));
 
         // Ser content type
         $this->setContentType($this->config->getDefaultContentType());
