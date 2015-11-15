@@ -13,4 +13,11 @@ interface AuthenticatorInterface
      * @return bool
      */
     public function authenticate($user, $pass, $remoteAdress = null);
+
+    /**
+     * Message related with authentication proccess (i.e: reason for denial)
+     *
+     * @return string
+     */
+    public function getMessage();
 }

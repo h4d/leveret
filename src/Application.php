@@ -356,7 +356,8 @@ class Application
                 $remoteAdress = $this->getRequest()->getRemoteAddress();
                 if (false == $authenticator->authenticate($user, $pass, $remoteAdress))
                 {
-                    throw new AuthException('Authentication failed!');
+                    throw new AuthException(sprintf('Authentication failed! (%s)',
+                                                    $authenticator->getMessage()));
                 }
             }
         }
