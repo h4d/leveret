@@ -478,7 +478,7 @@ class Application
         $this->resolveRoute();
         $this->getLogger()->info(sprintf('Dispatching route: %s',
                                          $this->getCurrentRoute()->getPattern()),
-                                 $this->getCurrentRoute()->getParams());
+                                 $this->getCurrentRoute()->getNamedParams());
         // Authentication & Request validation
         $this->authenticateAndValidateRequest();
         // Predispatch
