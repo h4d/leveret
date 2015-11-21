@@ -44,8 +44,6 @@ En el siguiente cuadro se muestra el contenido del fichero de configuración por
     environment = production
     ; Application root directory.
     path = ./
-    ; Application logger: a "callable" string representarion
-    logger = \H4D\Logger::i
     ; Default content type for responses: text/html, application/json, etc.
     defaultContentType = text/html
     ; Error handler: internal Application static method name.
@@ -176,6 +174,43 @@ Desde el objeto __Application__ de Leveret se puede obtener información de los 
  - __getRequestConstraintsViolationMessagesAsString($separator)__: Devuelve un string con los textos de los mensajes de error.
 
 Para más información sobre estos métodos ver la firma de los mismos.
+
+### Parámetros requeridos
+ 
+Para definir qué parámetros de una ruta determinada son requeridos se dispone de dos métodos: 
+
+ - __setRequiredParam(string $paramName)__: Que permite setear de forma independiente un párametro como requerido.
+ - __setRequiredParams(array $paramsNames)__: Que permite setear de una sola vez varios parámetros como requeridos.
+ 
+Ejemplo de uso:
+
+    $this->registerRoute('POST', '/admin/deploy-request')
+        ->setRequiredParam('username')
+        ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()]);
+
+
+### Autovalidación de peticiones
+
+Leveret permite configurar si se harán las validaciones de parámetros de modo automático (post rutinas de enrutado) o en modo manual. En el modo automático se puede definir el momento en el que se realizará la validación de la petición, si después de la autenticación (si es necesaria) o antes de la autenticación (si es necesaria).
+
+Los tres modos se pueden configurar mediante el método __setAutoRequestValidationMode($mode)__. Los valores posibles para el $mode son:
+
+- NO_VALIDATION: No se realiza validación automática.
+- VALIDATION_BEFORE_AUTH: La validación se realiza de forma automática antes de las rutinas de autenticación.
+- VALIDATION_AFTER_AUTH: La validación se realiza de forma automática después de las rutinas de autenticación.
+
+Para cada uno de los modos existen constantes definidas en la clase Application.
+
+    const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
+    const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
+    const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
+
+Ejemplo de uso:
+   
+        $app = new Application(APP_CONFIG_DIR.'/config.ini');
+        $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
+
+
 
 
 ### Ejecución de la aplicación
