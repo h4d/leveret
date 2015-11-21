@@ -518,6 +518,9 @@ class Application
         $this->preRoute();
         $this->setCurrentRoute($this->router->resolve($this->getRequest()));
         $this->postRoute();
+        // Add request's filters
+        $this->getRequest()->setFilters($this->getCurrentRoute()->getRequestFilters());
+
         return $this->getCurrentRoute();
     }
 

@@ -2,6 +2,9 @@
 
 namespace H4D\Leveret\Http;
 
+use H4D\Leveret\Filter\FilterInterface;
+use H4D\Leveret\Filter\Filters\DefaultFilter;
+
 class Request
 {
     const METHOD_DELETE = 'DELETE';
@@ -18,6 +21,10 @@ class Request
      * @var array
      */
     protected $params;
+    /**
+     * @var array
+     */
+    protected $filters = array();
     /**
      * @var string
      */
@@ -38,6 +45,19 @@ class Request
     {
         $this->rawRequest = $requestData;
     }
+
+    /**
+     * @param array $filters
+     *
+     * @return $this
+     */
+    public function setFilters(array $filters)
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -293,7 +313,31 @@ class Request
             {
                 parse_str($queryString, $this->params);
             }
+
+            // Apply default filter
+            $defaultFilter = new DefaultFilter();
+            foreach($this->params as $paramName=>$value)
+            {
+                $this->params[$paramName] = $defaultFilter->filter($value);
+            }
+
+            // Apply custom filters
+            if (is_array($this->filters) && count($this->filters)>0)
+            {
+                foreach($this->filters as $paramName=>$filters)
+                {
+                    if(isset($this->params[$paramName]))
+                    {
+                        foreach($filters as $filter)
+                        {
+                            /** @var FilterInterface $filter */
+                            $this->params[$paramName] = $filter->filter($this->params[$paramName]);
+                        }
+                    }
+                }
+            }
         }
+
         return $this->params;
     }
 

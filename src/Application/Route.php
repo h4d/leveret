@@ -2,6 +2,7 @@
 
 namespace H4D\Leveret\Application;
 
+use H4D\Leveret\Filter\FilterInterface;
 use H4D\Leveret\Validation\ConstraintInterface;
 
 class Route
@@ -78,6 +79,10 @@ class Route
      * @var array
      */
     protected $requestConstraints = array();
+    /**
+     * @var array
+     */
+    protected $requestFilters = array();
 
     /**
      * @param string $pattern
@@ -571,5 +576,43 @@ class Route
     public function getRequestConstraints()
     {
         return $this->requestConstraints;
+    }
+
+    /**
+     * @param string $paramName
+     * @param FilterInterface|FilterInterface[] $filters
+     *
+     * @return $this
+     * @throws \Exception
+     */
+    public function addRequestFilters($paramName, $filters)
+    {
+        $filters = is_array($filters) ? $filters : [$filters];
+        foreach($filters as $filter)
+        {
+            if (false == $filter instanceof FilterInterface)
+            {
+                throw new \Exception(sprintf('Invalid filter for param "%s".', $paramName));
+            }
+            $this->requestFilters[$paramName][] = $filter;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRequestFilters()
+    {
+        return (count($this->requestFilters)>0);
+    }
+
+    /**
+     * @return array [FilterInterface]
+     */
+    public function getRequestFilters()
+    {
+        return $this->requestFilters;
     }
 }
