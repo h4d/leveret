@@ -211,7 +211,16 @@ Ejemplo de uso:
         $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
 
 
+### Filtrado de parámetros POS|PUT|PATH|DELETE
 
+Por defecto a todos los parámetros de tipo string (o elementos de tipo string de un array) que se pasan por POST se les aplica el filtro FILTER_SANITIZE_STRING (ver documentación de PHP).
+ 
+Es posbile aplicar filtros específicos a los parámetros que se pasan por POST emplemando el método __addRequestFilters($paramName, $filters)__, en donde _$paramName_ es el nombre del parámetro que se quiere filtrar y _$filters_ es un array de objetos que deben cumplir con la interfaz __H4D\Leveret\Filter\FilterInterface__.
+
+Ejemplo:
+
+    $this->registerRoute('POST', '/create/alias')
+            ->addRequestFilters('alias', [new Filter1(), new Filter2()]);
 
 ### Ejecución de la aplicación
          
