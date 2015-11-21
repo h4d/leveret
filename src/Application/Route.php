@@ -59,6 +59,10 @@ class Route
      */
     protected $paramsTypes = array();
     /**
+     * @var array
+     */
+    protected $requiredParams = array();
+    /**
      * @var string
      */
     protected $wildcardRegex = '#^:(\(([a-z]+)\))?([a-zA-Z0-9_]+)$#';
@@ -129,6 +133,49 @@ class Route
     public function getName()
     {
         return is_string($this->name) ? $this->name : 'UnnamedRoute' ;
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return $this
+     */
+    public function setRequiredParams(array $params)
+    {
+        $this->requiredParams = $params;
+
+        return $this;
+    }
+
+    /**
+     * @param $paramName
+     *
+     * @return $this
+     */
+    public function setRequiredParam($paramName)
+    {
+        if (!in_array($paramName, $this->requiredParams))
+        {
+            $this->requiredParams[] = $paramName;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequiredParams()
+    {
+        return $this->requiredParams;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRequiredParams()
+    {
+        return (count($this->getRequiredParams()) > 0);
     }
 
     /**

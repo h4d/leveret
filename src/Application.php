@@ -664,11 +664,23 @@ class Application
                                        $throwsExceptions = false )
     {
         $this->requestConstraintsViolations = array();
-
         $requestParams = array_merge($request->getParams(),
                                      $request->getQuery(),
                                      $this->getCurrentRoute()->getNamedParams());
 
+        // Check required params
+        if (true == $this->getCurrentRoute()->hasRequiredParams())
+        {
+            foreach($this->getCurrentRoute()->getRequiredParams() as $requiredParamName)
+            {
+                if (!isset($requestParams[$requiredParamName]))
+                {
+                    $this->requestConstraintsViolations[$requiredParamName] = ['Required param missing!'];
+                }
+            }
+        }
+
+        // Validate request params
         foreach($constraints as $paramName=>$paramsConstraints)
         {
             if (isset($requestParams[$paramName]))
