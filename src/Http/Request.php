@@ -26,6 +26,10 @@ class Request
      */
     protected $filters = array();
     /**
+     * @var DefaultFilter
+     */
+    protected $defaultFilter;
+    /**
      * @var string
      */
     protected $url;
@@ -58,6 +62,18 @@ class Request
         return $this;
     }
 
+    /**
+     * @return DefaultFilter
+     */
+    public function getDefaultFilter()
+    {
+        if (!isset($this->defaultFilter))
+        {
+            $this->defaultFilter = new DefaultFilter();
+        }
+
+        return $this->defaultFilter;
+    }
 
     /**
      * @return string
@@ -315,10 +331,9 @@ class Request
             }
 
             // Apply default filter
-            $defaultFilter = new DefaultFilter();
             foreach($this->params as $paramName=>$value)
             {
-                $this->params[$paramName] = $defaultFilter->filter($value);
+                $this->params[$paramName] = $this->getDefaultFilter()->filter($value);
             }
 
             // Apply custom filters
