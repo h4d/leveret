@@ -580,7 +580,7 @@ class Route
 
     /**
      * @param string $paramName
-     * @param FilterInterface|FilterInterface[] $filters
+     * @param FilterInterface|callable|FilterInterface[]|callable[] $filters
      *
      * @return $this
      * @throws \Exception
@@ -590,7 +590,7 @@ class Route
         $filters = is_array($filters) ? $filters : [$filters];
         foreach($filters as $filter)
         {
-            if (false == $filter instanceof FilterInterface)
+            if (false == $filter instanceof FilterInterface && false == is_callable($filter))
             {
                 throw new \Exception(sprintf('Invalid filter for param "%s".', $paramName));
             }

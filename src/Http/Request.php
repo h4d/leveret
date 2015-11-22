@@ -345,8 +345,14 @@ class Request
                     {
                         foreach($filters as $filter)
                         {
-                            /** @var FilterInterface $filter */
-                            $this->params[$paramName] = $filter->filter($this->params[$paramName]);
+                            if ($filter instanceof FilterInterface)
+                            {
+                                $this->params[$paramName] = $filter->filter($this->params[$paramName]);
+                            }
+                            elseif(is_callable($filter))
+                            {
+                                $this->params[$paramName] = $filter($this->params[$paramName]);
+                            }
                         }
                     }
                 }
