@@ -81,6 +81,10 @@ class Route
      */
     protected $requestConstraints = array();
     /**
+     * @var FilterInterface
+     */
+    protected $defaultFilter;
+    /**
      * @var array
      */
     protected $requestFilters = array();
@@ -352,15 +356,22 @@ class Route
     }
 
     /**
+     * @param FilterInterface $filter
+     *
+     * @return $this
+     */
+    public function setDefaultFilter(FilterInterface $filter)
+    {
+        $this->defaultFilter = $filter;
+
+        return $this;
+    }
+
+    /**
      * @return DefaultFilter
      */
     public function getDefaultFilter()
     {
-        if (!isset($this->defaultFilter))
-        {
-            $this->defaultFilter = new DefaultFilter();
-        }
-
         return $this->defaultFilter;
     }
 

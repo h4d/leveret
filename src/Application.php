@@ -13,6 +13,8 @@ use H4D\Leveret\Exception\BadRequestException;
 use H4D\Leveret\Exception\ConfigErrorException;
 use H4D\Leveret\Exception\RouteNotFoundException;
 use H4D\Leveret\Exception\ViewException;
+use H4D\Leveret\Filter\FilterInterface;
+use H4D\Leveret\Filter\Filters\DefaultFilter;
 use H4D\Leveret\Http\Request;
 use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
@@ -84,6 +86,11 @@ class Application
      */
     protected $name;
     /**
+     * @var FilterInterface
+     */
+    protected $defaultInputFilter;
+
+    /**
      * @param string $configFile
      */
     public function __construct($configFile = null)
@@ -125,6 +132,10 @@ class Application
 
         // Set paths
         $this->setViewTemplatesDirectory($this->config->getViewsPath());
+
+        // Default input filter
+        $this->defaultInputFilter = new DefaultFilter($this->config->getDefaultInputFilterType());
+        $this->getRequest()->setDefaultFilter($this->defaultInputFilter);
 
         return $this;
     }

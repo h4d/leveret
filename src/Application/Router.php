@@ -63,6 +63,7 @@ class Router
                 {
                     $matchedRoute = clone($route);
                     array_shift($matches); // First match is the complete route
+                    $matchedRoute->setDefaultFilter($request->getDefaultFilter());
                     $matchedRoute->setParams($matches);
                     break;
                 }
