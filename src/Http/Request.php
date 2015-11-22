@@ -181,7 +181,7 @@ class Request
             $query = $queryString;
         }
 
-        return $query;
+        return $this->getDefaultFilter()->filter($query);
     }
 
     /**
