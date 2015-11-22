@@ -48,6 +48,11 @@ En el siguiente cuadro se muestra el contenido del fichero de configuración por
     defaultContentType = text/html
     ; Error handler: internal Application static method name.
     errorHandler = errorHandler
+    ; Default input filter type (@see http://php.net/manual/en/filter.filters.sanitize.php)
+    ; 516: FILTER_UNSAFE_RAW
+    ; 522: FILTER_SANITIZE_FULL_SPECIAL_CHARS
+    ; 513: FILTER_SANITIZE_STRING
+    defaultInputFilterType = 516
     
     [views]
     ; View templates directory
@@ -211,16 +216,17 @@ Ejemplo de uso:
         $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
 
 
-### Filtrado de parámetros POS|PUT|PATH|DELETE
+### Filtrado de parámetros POST|PUT|PATH|DELETE, parámetros de query y URL
 
-Por defecto a todos los parámetros de tipo string (o elementos de tipo string de un array) que se pasan por POST se les aplica el filtro FILTER_SANITIZE_STRING (ver documentación de PHP).
+Por defecto se aplica un filtro a todos los parámetros que llegan a la aplicación, ya sean por POST, PUT, PATH, DELETE, parámetros de query o URL. El filtro que se aplica por defecto se puede espeficicar en el fichero de config de la aplicación en el campo defaultInputFilterType. El valor de ese campo es un número entero equivalente a alguno de los filtros estandar de PHP ([ver documetación de PHP] (http://php.net/manual/en/filter.filters.sanitize.php)).
  
-Es posbile aplicar filtros específicos a los parámetros que se pasan por POST emplemando el método __addRequestFilters($paramName, $filters)__, en donde _$paramName_ es el nombre del parámetro que se quiere filtrar y _$filters_ es un array de objetos que deben cumplir con la interfaz __H4D\Leveret\Filter\FilterInterface__.
+Es posbile aplicar filtros específicos a los parámetros emplemando el método __addRequestFilters($paramName, $filters)__, en donde _$paramName_ es el nombre del parámetro que se quiere filtrar y _$filters_ es un array de objetos que deben cumplir con la interfaz __H4D\Leveret\Filter\FilterInterface__ (o closures que aceptan como parámetro un valor y devuelvan el valor filtrado).
 
 Ejemplo:
 
     $this->registerRoute('POST', '/create/alias')
-            ->addRequestFilters('alias', [new Filter1(), new Filter2()]);
+            ->addRequestFilters('alias', [new Filter1(), new Filter2(), 
+                                         function($alias){return strtolower($alias)}]);
 
 ### Ejecución de la aplicación
          
