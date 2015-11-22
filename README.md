@@ -218,7 +218,11 @@ Ejemplo de uso:
 
 ### Filtrado de parámetros POST|PUT|PATH|DELETE, parámetros de query y URL
 
-Por defecto se aplica un filtro a todos los parámetros que llegan a la aplicación, ya sean por POST, PUT, PATH, DELETE, parámetros de query o URL. El filtro que se aplica por defecto se puede espeficicar en el fichero de config de la aplicación en el campo defaultInputFilterType. El valor de ese campo es un número entero equivalente a alguno de los filtros estandar de PHP ([ver documetación de PHP] (http://php.net/manual/en/filter.filters.sanitize.php)).
+Por defecto se aplica un filtro a todos los parámetros que llegan a la aplicación, ya sean por POST, PUT, PATH, DELETE, parámetros de query o URL. El filtro que se aplica por defecto se puede espeficicar en el fichero de config de la aplicación en el campo _defaultInputFilterType_. El valor de ese campo es un número entero equivalente a alguno de los filtros estandar de PHP ([ver documetación de PHP] (http://php.net/manual/en/filter.filters.sanitize.php)). Los valores más cumunes para _defaultInputFilterType_ se muestran a continuación:
+
+- 516 (FILTER_UNSAFE_RAW): No se filtran los parámetros.
+- 522 (FILTER_SANITIZE_FULL_SPECIAL_CHARS): Equivalente a htmlspecialchars().
+- 513 (FILTER_SANITIZE_STRING): Filtra las tags de las cadenas.
  
 Es posbile aplicar filtros específicos a los parámetros emplemando el método __addRequestFilters($paramName, $filters)__, en donde _$paramName_ es el nombre del parámetro que se quiere filtrar y _$filters_ es un array de objetos que deben cumplir con la interfaz __H4D\Leveret\Filter\FilterInterface__ (o closures que aceptan como parámetro un valor y devuelvan el valor filtrado).
 
