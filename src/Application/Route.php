@@ -3,6 +3,7 @@
 namespace H4D\Leveret\Application;
 
 use H4D\Leveret\Filter\FilterInterface;
+use H4D\Leveret\Filter\Filters\DefaultFilter;
 use H4D\Leveret\Validation\ConstraintInterface;
 
 class Route
@@ -345,8 +346,67 @@ class Route
     {
         $this->params = $this->reOrderParams($params);
         $this->namedParams = $this->extractNamedParams();
+        $this->filterParams();
 
         return $this;
+    }
+
+    /**
+     * @return DefaultFilter
+     */
+    public function getDefaultFilter()
+    {
+        if (!isset($this->defaultFilter))
+        {
+            $this->defaultFilter = new DefaultFilter();
+        }
+
+        return $this->defaultFilter;
+    }
+
+    /**
+     * @return void
+     */
+    protected function filterParams()
+    {
+        // Apply default filter
+        foreach($this->namedParams as $paramName => $value)
+        {
+            $filteredValue = $this->getDefaultFilter()->filter($value);
+            $this->namedParams[$paramName] = $filteredValue;
+            $paramKey = array_search($paramName, $this->paramsNames);
+            if (isset($this->params[$paramKey]))
+            {
+                $this->params[$paramKey] = $filteredValue;
+            }
+        }
+
+        // Apply custom filters
+        foreach($this->getRequestFilters() as $paramName=>$filters)
+        {
+            if(isset($this->namedParams[$paramName]))
+            {
+                foreach($filters as $filter)
+                {
+                    $filteredValue = $this->namedParams[$paramName];
+                    if ($filter instanceof FilterInterface)
+                    {
+                        $filteredValue = $filter->filter($this->namedParams[$paramName]);
+
+                    }
+                    elseif(is_callable($filter))
+                    {
+                        $filteredValue = $filter($this->namedParams[$paramName]);
+                    }
+                    $this->namedParams[$paramName] = $filteredValue;
+                    $paramKey = array_search($paramName, $this->paramsNames);
+                    if (isset($this->params[$paramKey]))
+                    {
+                        $this->params[$paramKey] = $filteredValue;
+                    }
+                }
+            }
+        }
     }
 
     /**
