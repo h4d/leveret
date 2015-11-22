@@ -5,6 +5,7 @@ namespace H4D\Leveret\Application;
 use H4D\Leveret\Application;
 use H4D\Leveret\Exception\FileNotFoundException;
 use H4D\Leveret\Exception\FileNotReadableException;
+use H4D\Leveret\Filter\FilterInterface;
 use H4D\Leveret\Http\Headers;
 
 class Config
@@ -29,6 +30,10 @@ class Config
      * @var string
      */
     protected $defaultContentType = Headers::CONTENT_TYPE_TEXT_HTML;
+    /**
+     * @var int
+     */
+    protected $defaultInputFilterType = FILTER_UNSAFE_RAW;
 
     /**
      * @param array $data
@@ -40,6 +45,10 @@ class Config
         $this->errorHandler = $data['application']['errorHandler'];
         $this->viewsPath = $data['views']['path'];
         $this->defaultContentType = $data['application']['defaultContentType'];
+        if (isset($data['application']['defaultInputFilterType']))
+        {
+            $this->defaultInputFilterType = $data['application']['defaultInputFilterType'];
+        }
     }
 
     /**
@@ -158,6 +167,13 @@ class Config
         return $this;
     }
 
+    /**
+     * @return FilterInterface
+     */
+    public function getDefaultInputFilterType()
+    {
+        return $this->defaultInputFilterType;
+    }
 
 
 }
