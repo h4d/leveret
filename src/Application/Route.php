@@ -604,7 +604,7 @@ class Route
                 break;
             case 'string':
             default:
-                $regex = '([a-zA-Z0-9- _\.@]*)';
+                $regex = '([^\/\n\r]+)';
                 break;
         }
 
