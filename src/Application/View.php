@@ -18,7 +18,7 @@ class View
     }
 
     /**
-     * This function supports extra params for var substition in $string.
+     * This function supports extra params for var substitution in $string.
      *
      * @param $string
      *
@@ -26,7 +26,7 @@ class View
      */
     public function translate($string)
     {
-        return $this->translator->translate(func_get_args());
+        return call_user_func_array([$this->translator, 'tranlate'], func_get_args());
     }
 
 }
