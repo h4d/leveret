@@ -26,7 +26,7 @@ class View
      */
     public function translate($string)
     {
-        return call_user_func_array([$this->translator, 'tranlate'], func_get_args());
+        return call_user_func_array([$this->translator, 'translate'], func_get_args());
     }
 
 }
