@@ -340,6 +340,47 @@ Ejemplo de una plantilla:
     </body>
     </html>
     
+## Vistas parciales
+
+Se pueden emplear vistas parciales dentro de otras vistas del siguiente modo:
+
+    <div>
+        <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
+    </div>
+
+Las vistas parciales "heredan" todos los métodos y variables de las vistas contenedoras. 
+
+Está permitido el uso de vistas parciales en el interior de vistas parciales. Por ejemplo:
+
+En la vista principal:
+
+    <div>
+        <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
+    </div>
+    
+En APP_VIEWS_DIR.'/partials/test/partial.phtml':
+
+    <h1>Partial</h1>
+    <p>
+        <?php echo $this->translate('Hola %s! Esto es un partial.', $nombre);?>
+    </p>
+    
+    <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/internal.phtml');?>
+
+En APP_VIEWS_DIR.'/partials/test/internal.phtml'
+
+    <h2>Partial interno</h2>
+    <?php echo $this->translate('Hola %s! Soy un partial dentro de otro partial', $nombre);?>
+
+### ¿Cómo se resuelven los nombres de variables dentro de los partials?
+
+1. Si la variable está definida en el partial se usa esa variable.
+2. Si la variable no está definida en el partial y sí en su vista contenedora se utiza la variable de la vista contenedora. 
+3. Si la variable no está definida en el partial y tampoco en la vista contenedora, se lanza una excepción de renderizado.
+
+__OJO!__ Un partial interno no "hereda" las variables del partial contedor, sólo las de la vista contenedora.
+
+
 ## Layouts
 
 Los layouts son vistas que se pueden emplear como un contenedor de otras vistas. En todo layout existirá una variable por defecto con nombre **$contents** que será sustituida por el contenido de otra vista en las rutina de renderizado de la aplicación.
