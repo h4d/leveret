@@ -31,6 +31,16 @@ class View
     }
 
     /**
+     * @param string $string
+     *
+     * @return string
+     */
+    public function escapeHtml($string)
+    {
+        return htmlspecialchars($string);
+    }
+
+    /**
      * @param string $route
      * @param array $vars
      *
