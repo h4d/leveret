@@ -93,6 +93,14 @@ class Request
     /**
      * @return string
      */
+    public function getForwardedAddress()
+    {
+        return isset($this->rawRequest['HTTP_X_FORWARDED_FOR']) ? $this->rawRequest['HTTP_X_FORWARDED_FOR'] : '';
+    }
+
+    /**
+     * @return string
+     */
     public function getMethod()
     {
         return isset($this->rawRequest['REQUEST_METHOD']) ? $this->rawRequest['REQUEST_METHOD'] :
