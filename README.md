@@ -40,6 +40,8 @@ Para que funcione la aplicación es necesario crear un fichero de configuración
 En el siguiente cuadro se muestra el contenido del fichero de configuración por defecto. 
 
     [application]
+    ; Application name
+    name = NoNamedApp
     ; Application environmnet: production, development.
     environment = production
     ; Application root directory.
@@ -53,10 +55,22 @@ En el siguiente cuadro se muestra el contenido del fichero de configuración por
     ; 522: FILTER_SANITIZE_FULL_SPECIAL_CHARS
     ; 513: FILTER_SANITIZE_STRING
     defaultInputFilterType = 516
+    ; Register routes defined in [routes] section (values: true|false).
+    registerRoutesDefinedInConfigFile = true
     
     [views]
     ; View templates directory
     path = ./
+    
+    [routes]
+    ; Example: Call appplication method
+    appInfo[pattern] = "/app/info"
+    appInfo[method] = "GET"
+    appInfo[callback] = "renderAppInfo"
+    ; Example: Call controller/action
+    ;status[pattern] = "/app/status"
+    ;status[method] = "GET"
+    ;status[callback] = "Your/Controller/ClassName::controllerMethod"
         
 **NOTA:** Si las rutas indicadas en el fichero de configuración son relativas iran referidas al directorio raiz del servidor.
 
@@ -138,6 +152,36 @@ En el siguiente ejemplo se añade una acción de predispatch que modifica los pa
                 }
                 $route->setParams($newParams);
             })
+
+### Registro de rutas en el fichero de configuración
+
+Pueden registrarse rutas sencillas desde el fichero de configuración de la aplicación. 
+
+Para activar el registro de rutas definidas en el fichero de configuración es necesario que el valor de configuración _registerRoutesDefinedInConfigFile_ esté definido a _true_
+
+    registerRoutesDefinedInConfigFile = true
+    
+Las rutas se configuran en la sección _[routes]_ y pueden ser de dos tipos: 
+
+ - Rutas que apuntan a un Controller/Action.
+ - Rutas que apuntan a un método de la clase de la aplicación.
+
+#### Definición de ruta que apunta a un Controller/Action:
+
+    [routes]
+    ; Example: Define a route named "status" dispatched by a controller/action
+    status[pattern] = "/example/route"
+    status[method] = "GET"
+    status[callback] = "Your/Controller/ClassName::controllerMethod"
+    
+#### Definición de ruta que apunta a un método de la clase de la aplicación:
+
+    [routes]
+    ; Example: Define a route named "info" dispatched by an app's method
+    info[pattern] = "/example/route"
+    info[method] = "GET"
+    info[callback] = "anAppMethod" ;; Method's name of your app class
+
 
 #### Validación de las peticiones
 
