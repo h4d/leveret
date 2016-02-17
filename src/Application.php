@@ -137,6 +137,35 @@ class Application
         $this->defaultInputFilter = new DefaultFilter($this->config->getDefaultInputFilterType());
         $this->getRequest()->setDefaultFilter($this->defaultInputFilter);
 
+        // Register routes defined in config file
+        if (true == $this->config->getRegisterRoutesDefinedInConfigFile())
+        {
+            $configFileRoutes = $this->config->getConfigFileRoutes();
+            foreach($configFileRoutes as $name=>$configFileRoute)
+            {
+                if ($configFileRoute->isControllerActionCallback())
+                {
+                    $this->registerRoute($configFileRoute->getMethod(), $configFileRoute->getPattern())
+                         ->useController($configFileRoute->getCallbackControllerName(),
+                                         $configFileRoute->getCallbackActionName())
+                         ->setName($name);
+                }
+                else
+                {
+                    if (method_exists($this, $configFileRoute->getCallbackApplicationMethodName()))
+                    {
+                        $this->registerRoute($configFileRoute->getMethod(), $configFileRoute->getPattern())
+                             ->setAction(function () use ($configFileRoute)
+                             {
+                                 call_user_func([$this,
+                                                 $configFileRoute->getCallbackApplicationMethodName()]);
+                             })
+                             ->setName($name);
+                    }
+                }
+            }
+        }
+
         return $this;
     }
 

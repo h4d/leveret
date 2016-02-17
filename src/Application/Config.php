@@ -34,6 +34,14 @@ class Config
      * @var int
      */
     protected $defaultInputFilterType = FILTER_UNSAFE_RAW;
+    /**
+     * @var bool
+     */
+    protected $registerRoutesDefinedInConfigFile = false;
+    /**
+     * @var array
+     */
+    protected $parsedConfigFileRoutes;
 
     /**
      * @param array $data
@@ -48,6 +56,14 @@ class Config
         if (isset($data['application']['defaultInputFilterType']))
         {
             $this->defaultInputFilterType = $data['application']['defaultInputFilterType'];
+        }
+        if (isset($data['application']['registerRoutesDefinedInConfigFile']))
+        {
+            $this->registerRoutesDefinedInConfigFile = (bool)$data['application']['registerRoutesDefinedInConfigFile'];
+        }
+        if (isset($data['routes']))
+        {
+            $this->configFileRoutes = $data['routes'];
         }
     }
 
@@ -175,5 +191,49 @@ class Config
         return $this->defaultInputFilterType;
     }
 
+    /**
+     * @return boolean
+     */
+    public function getRegisterRoutesDefinedInConfigFile()
+    {
+        return $this->registerRoutesDefinedInConfigFile;
+    }
+
+    /**
+     * @param boolean $registerRoutesDefinedInConfigFile
+     *
+     * @return Config
+     */
+    public function setRegisterRoutesDefinedInConfigFile($registerRoutesDefinedInConfigFile)
+    {
+        $this->registerRoutesDefinedInConfigFile = $registerRoutesDefinedInConfigFile;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function parseConfigFileRoutes()
+    {
+        $parsedRoutes = [];
+        foreach($this->configFileRoutes as $name=>$data)
+        {
+            $parsedRoutes[$name] = Application\Config\Route::create($data);
+        }
+        return $parsedRoutes;
+    }
+
+    /**
+     * @return Application\Config\Route[]
+     */
+    public function getConfigFileRoutes()
+    {
+        if (is_null($this->parsedConfigFileRoutes))
+        {
+            $this->parsedConfigFileRoutes = $this->parseConfigFileRoutes();
+        }
+
+        return $this->parsedConfigFileRoutes;
+    }
 
 }
