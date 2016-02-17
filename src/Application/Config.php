@@ -21,6 +21,10 @@ class Config
     /**
      * @var string
      */
+    protected $applicationName = 'NoNamedApp';
+    /**
+     * @var string
+     */
     protected $viewsPath;
     /**
      * @var string
@@ -64,6 +68,10 @@ class Config
         if (isset($data['routes']))
         {
             $this->configFileRoutes = $data['routes'];
+        }
+        if (isset($data['application']['name']))
+        {
+            $this->applicationName = $data['application']['name'];
         }
     }
 
@@ -125,6 +133,27 @@ class Config
         $this->applicationPath = $applicationPath;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getApplicationName()
+    {
+        return $this->applicationName;
+    }
+
+    /**
+     * @param string $applicationName
+     *
+     * @return $this
+     */
+    public function setApplicationName($applicationName)
+    {
+        $this->applicationName = $applicationName;
+
+        return $this;
+    }
+
 
     /**
      * @return string

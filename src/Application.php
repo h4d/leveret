@@ -123,6 +123,9 @@ class Application
      */
     protected function applyConfig()
     {
+        // Set app name
+        $this->setName($this->config->getApplicationName());
+
         // Set error handler
         $errorHandler = $this->config->getErrorHandler();
         set_error_handler(array(get_class($this), $errorHandler));
