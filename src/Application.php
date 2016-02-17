@@ -855,5 +855,11 @@ class Application
         return $this;
     }
 
+    public function renderAppInfo()
+    {
+        $this->setContentType('text/html');
+        $this->getView()->addVar('app', $this);
+        $this->render(__DIR__.'/Defaults/views/app-info.phtml');
+    }
 }
 

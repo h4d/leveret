@@ -1,0 +1,16 @@
+<?php /** @var $app \H4D\Leveret\Application */;?>
+<h1>General information</h1>
+
+<h2>Application info</h2>
+<dl>
+    <dt>Name</dt><dd><?php echo $app->getName();?></dd>
+    <dt>Environment</dt><dd><?php echo $app->getEnvironment();?></dd>
+</dl>
+
+<h2>System info</h2>
+<dl>
+    <dt>Date</dt><dd><?php echo date(DATE_ISO8601);?></dd>
+    <dt>Time zone</dt><dd><?php echo date_default_timezone_get();?></dd>
+    <dt>IP address</dt><dd><?php echo $_SERVER['SERVER_ADDR'];?></dd>
+    <dt>PHP version</dt><dd><?php echo phpversion();?></dd>
+</dl>
