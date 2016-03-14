@@ -248,7 +248,7 @@ class Controller
      */
     protected function redirect($url, $statusCode = Status::HTTP_SEE_OTHER)
     {
-        if(strpos($url,'http/')!==0)
+        if (strpos($url, 'http') !== 0)
         {
             $url = $this->request->getProtocol().'://'.$this->request->getHost().'/'.ltrim($url, '/');
         }
