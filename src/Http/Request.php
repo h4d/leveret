@@ -112,10 +112,9 @@ class Request
      */
     public function getPath()
     {
-        return isset($this->rawRequest['PATH_INFO']) ?
-            ('/' != $this->rawRequest['PATH_INFO']) ?
-                rtrim($this->rawRequest['PATH_INFO'], '/') : $this->rawRequest['PATH_INFO']
-            : '/';
+        $path = parse_url($this->rawRequest['REQUEST_URI'], PHP_URL_PATH);
+
+        return !empty($path) ? ('/' != $path) ? rtrim($path, '/') : $path : '/';
     }
 
     /**
