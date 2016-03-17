@@ -715,9 +715,10 @@ class Application
                                      $this->getCurrentRoute()->getNamedParams());
 
         // Check required params
-        if (true == $this->getCurrentRoute()->hasRequiredParams())
+        $requiredParams = $this->getCurrentRoute()->getRequiredParams();
+        if (count($requiredParams)>0)
         {
-            foreach($this->getCurrentRoute()->getRequiredParams() as $requiredParamName)
+            foreach($requiredParams as $requiredParamName)
             {
                 if (!isset($requestParams[$requiredParamName]))
                 {
@@ -729,7 +730,8 @@ class Application
         // Validate request params
         foreach($constraints as $paramName=>$paramsConstraints)
         {
-            if (isset($requestParams[$paramName]))
+            $paramRequired = in_array($paramName, $requiredParams);
+            if (true == $paramRequired || false == empty($requestParams[$paramName]))
             {
                 $violations = $this->validateParam($requestParams[$paramName], $paramsConstraints);
                 if (count($violations)>0)
