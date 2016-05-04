@@ -720,7 +720,7 @@ class Application
         {
             foreach($requiredParams as $requiredParamName)
             {
-                if (!isset($requestParams[$requiredParamName]))
+                if (!array_key_exists($requiredParamName, $requestParams))
                 {
                     $this->requestConstraintsViolations[$requiredParamName] = ['Required param missing!'];
                 }
@@ -730,13 +730,17 @@ class Application
         // Validate request params
         foreach($constraints as $paramName=>$paramsConstraints)
         {
-            $paramRequired = in_array($paramName, $requiredParams);
-            if (true == $paramRequired || false == empty($requestParams[$paramName]))
+            if (array_key_exists($paramName, $requestParams))
             {
-                $violations = $this->validateParam($requestParams[$paramName], $paramsConstraints);
-                if (count($violations)>0)
+                $paramIsRequired = in_array($paramName, $requiredParams);
+                $paramIsEmpty = empty($requestParams[$paramName]);
+                if ($paramIsRequired || !$paramIsEmpty)
                 {
-                    $this->requestConstraintsViolations[$paramName] = $violations;
+                    $violations = $this->validateParam($requestParams[$paramName], $paramsConstraints);
+                    if (count($violations)>0)
+                    {
+                        $this->requestConstraintsViolations[$paramName] = $violations;
+                    }
                 }
             }
         }
