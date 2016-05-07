@@ -27,15 +27,15 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "git@dev.edusalguero.com:h4d/template.git"
+      "url": "git@dev.hosting4devs.com:h4d/template.git"
     },
     {
       "type": "vcs",
-      "url": "git@dev.edusalguero.com:h4d/validator.git"
+      "url": "git@dev.hosting4devs.com:h4d/validator.git"
     },
     {
       "type": "vcs",
-      "url": "git@dev.edusalguero.com:h4d/i18n.git"
+      "url": "git@dev.hosting4devs.com:h4d/i18n.git"
     }
   ],
   "autoload": {
