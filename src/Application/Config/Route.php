@@ -183,6 +183,7 @@ class Route
     public function setCallback($callback)
     {
         $this->callback = $callback;
+        $this->callbackData = $this->parseCallback($this->callback);
 
         return $this;
     }
