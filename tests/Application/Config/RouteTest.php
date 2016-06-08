@@ -100,6 +100,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($route->isControllerActionCallback());
     }
 
+    /**
+     * @depends test_getters_returnProperValues
+     */
     public function test_setters_setValuesProperly()
     {
         $route = $this->getRoute();
