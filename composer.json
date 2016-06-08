@@ -22,7 +22,8 @@
   },
   "require-dev": {
     "h4d/validator": "^1.0",
-    "symfony/validator": "~2.3"
+    "symfony/validator": "~2.3",
+    "phpunit/phpunit":  "^4.8"
   },
   "repositories": [
     {
