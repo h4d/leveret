@@ -314,8 +314,22 @@ class Request
      */
     public function getContentType()
     {
-        return isset($this->rawRequest['CONTENT_TYPE']) ?
-            $this->rawRequest['CONTENT_TYPE'] : Headers::CONTENT_TYPE_TEXT_HTML;
+        // Standard web servers
+        if (isset($this->rawRequest['CONTENT_TYPE']))
+        {
+            $contentType = $this->rawRequest['CONTENT_TYPE'];
+        }
+        // Built-in PHP web server
+        elseif ($this->rawRequest['HTTP_CONTENT_TYPE'])
+        {
+            $contentType = $this->rawRequest['HTTP_CONTENT_TYPE'];
+        }
+        else
+        {
+            $contentType = Headers::CONTENT_TYPE_TEXT_HTML;
+        }
+
+        return $contentType;
     }
 
     /**
