@@ -320,7 +320,7 @@ class Request
             $contentType = $this->rawRequest['CONTENT_TYPE'];
         }
         // Built-in PHP web server
-        elseif ($this->rawRequest['HTTP_CONTENT_TYPE'])
+        elseif (isset($this->rawRequest['HTTP_CONTENT_TYPE']))
         {
             $contentType = $this->rawRequest['HTTP_CONTENT_TYPE'];
         }
