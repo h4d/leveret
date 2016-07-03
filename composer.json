@@ -18,7 +18,8 @@
     "php": ">=5.5.9",
     "psr/log": "~1.0",
     "h4d/template": "^1.0",
-    "h4d/i18n": "^1.0"
+    "h4d/i18n": "^1.0",
+    "h4d/patterns": "^1.0"
   },
   "require-dev": {
     "h4d/validator": "^1.0",
@@ -37,6 +38,10 @@
     {
       "type": "vcs",
       "url": "git@dev.hosting4devs.com:h4d/i18n.git"
+    },
+    {
+      "type": "vcs",
+      "url": "git@dev.hosting4devs.com:h4d/patterns.git"
     }
   ],
   "autoload": {
