@@ -20,12 +20,18 @@ use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
 use H4D\Leveret\Validation\ConstraintInterface;
 use H4D\Leveret\Validation\ConstraintValidator;
+use H4D\Patterns\Interfaces\EventInterface;
+use H4D\Patterns\Interfaces\PublisherInterface;
+use H4D\Patterns\SubscribersCollection;
+use H4D\Patterns\Traits\SubscribersAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 
-class Application
+class Application implements PublisherInterface
 {
+    use SubscribersAwareTrait;
+    
     const ENV_PRODUCTION  = 'production';
     const ENV_DEVELOPMENT = 'development';
 
@@ -177,6 +183,7 @@ class Application
      */
     protected function init()
     {
+        $this->subscribers = new SubscribersCollection();
         $this->request = new Request($_SERVER);
         $this->router = Router::i();
         $this->response = new Response();
@@ -870,5 +877,31 @@ class Application
         $this->getView()->addVar('app', $this);
         $this->render(__DIR__.'/Defaults/views/app-info.phtml');
     }
+
+    /**
+     * @param EventInterface $event
+     */
+    public function publish(EventInterface $event)
+    {
+        foreach ($this->getSubscribers() as $subscriber)
+        {
+            try
+            {
+                $subscriber->update($event, $this);
+            }
+            catch (\Exception $e)
+            {
+                $this->getLogger()->error('Exception publishing application event!',
+                                          ['event' => get_class($event),
+                                           'subscriber' => get_class($subscriber),
+                                           'exception' => get_class($e),
+                                           'exceptionMsg' => $e->getMessage(),
+                                           'exceptionCode' => $e->getCode(),
+                                           'exceptionFile' => $e->getFile(),
+                                           'exceptionLine' => $e->getLine()]);
+            }
+        }
+    }
+
 }
 

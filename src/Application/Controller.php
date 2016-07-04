@@ -6,10 +6,16 @@ use H4D\Leveret\Application;
 use H4D\Leveret\Http\Request;
 use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
+use H4D\Patterns\Interfaces\EventInterface;
+use H4D\Patterns\Interfaces\PublisherInterface;
+use H4D\Patterns\SubscribersCollection;
+use H4D\Patterns\Traits\SubscribersAwareTrait;
 use Psr\Log\LoggerInterface;
 
-class Controller
+class Controller implements PublisherInterface
 {
+    use SubscribersAwareTrait;
+
     /**
      * @var string
      */
@@ -42,6 +48,7 @@ class Controller
      * @var View
      */
     protected $layout;
+
     /**
      * @param Application $app
      */
@@ -54,6 +61,7 @@ class Controller
         $this->view = $app->getView();
         $this->layout = $app->getLayout();
         $this->route = $app->getCurrentRoute();
+        $this->subscribers = new SubscribersCollection();
         $this->init();
     }
 
@@ -254,6 +262,33 @@ class Controller
         }
         header('Location: ' . $url, true, $statusCode);
         die();
+    }
+
+    /**
+     * @param EventInterface $event
+     */
+    public function publish(EventInterface $event)
+    {
+        // Notify to controller subscribers.
+        foreach ($this->getSubscribers() as $subscriber)
+        {
+            try
+            {
+                $subscriber->update($event, $this);
+            }
+            catch (\Exception $e)
+            {
+                $this->getLogger()->error('Exception publishing controller event!',
+                                          ['event' => get_class($event),
+                                           'subscriber' => get_class($subscriber),
+                                           'exception' => get_class($e),
+                                           'exceptionMsg' => $e->getMessage(),
+                                           'exceptionCode' => $e->getCode(),
+                                           'exceptionFile' => $e->getFile(),
+                                           'exceptionLine' => $e->getLine()]);
+            }
+        }
+        $this->getApp()->publish($event);
     }
 
 }
