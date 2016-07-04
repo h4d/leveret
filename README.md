@@ -434,6 +434,24 @@ Para hacer uso de un layout determinado se debe emplear el método de la aplicac
     $app->useLayout('layouts/main.phtml');
     $app->render('add.phtml');
 
+## Eventos
+
+Tanto la aplicación como los controllers de Leveret implementan el patrón _publisher_, por lo que pueden publicar eventos mediante el método _publish(Event $event)_.
+
+    $app->publish($myEvent);
+
+A los eventos de la aplicación pueden subscribirser tantos _listereners/observers/subscribers_ como sea necesario, para ello se utiliza el método _attachSubscriber(SubscriberInterface $subscriber)_. 
+
+    $app->attachSubscriber($mySubscriberOne);
+    $app->attachSubscriber($mySubscriberTwo);
+
+Si se quiere retirar un listener se usaría el método _dettachSubscriber(SubscriberInterface $subscriber)_.
+
+    $app->dettachSubscriber($mySubscriberTwo);
+
+Los controllers disponen de los mismos métodos para agregar o retirar listeners. Todos los eventos que se publiquen desde un controller se propagan a la aplicación.
+
+
 ## Ejemplo completo:
 
     <?php
