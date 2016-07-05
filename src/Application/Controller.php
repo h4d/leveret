@@ -8,7 +8,7 @@ use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
 use H4D\Patterns\Interfaces\EventInterface;
 use H4D\Patterns\Interfaces\PublisherInterface;
-use H4D\Patterns\SubscribersCollection;
+use H4D\Patterns\Collections\SubscribersCollection;
 use H4D\Patterns\Traits\SubscribersAwareTrait;
 use Psr\Log\LoggerInterface;
 
