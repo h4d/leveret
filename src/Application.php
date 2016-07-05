@@ -22,7 +22,7 @@ use H4D\Leveret\Validation\ConstraintInterface;
 use H4D\Leveret\Validation\ConstraintValidator;
 use H4D\Patterns\Interfaces\EventInterface;
 use H4D\Patterns\Interfaces\PublisherInterface;
-use H4D\Patterns\SubscribersCollection;
+use H4D\Patterns\Collections\SubscribersCollection;
 use H4D\Patterns\Traits\SubscribersAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
