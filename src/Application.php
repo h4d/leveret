@@ -6,6 +6,7 @@ use H4D\Leveret\Application\Config;
 use H4D\Leveret\Application\Controller;
 use H4D\Leveret\Application\Route;
 use H4D\Leveret\Application\Router;
+use H4D\Leveret\Application\ServiceContainerInterface;
 use H4D\Leveret\Application\View;
 use H4D\Leveret\Exception\ApplicationException;
 use H4D\Leveret\Exception\AuthException;
@@ -18,6 +19,7 @@ use H4D\Leveret\Filter\Filters\DefaultFilter;
 use H4D\Leveret\Http\Request;
 use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
+use H4D\Leveret\Service\ServiceContainer;
 use H4D\Leveret\Validation\ConstraintInterface;
 use H4D\Leveret\Validation\ConstraintValidator;
 use H4D\Patterns\Interfaces\EventInterface;
@@ -95,7 +97,10 @@ class Application implements PublisherInterface
      * @var FilterInterface
      */
     protected $defaultInputFilter;
-
+    /**
+     * @var ServiceContainerInterface
+     */
+    protected $serviceContainer;
     /**
      * @param string $configFile
      */
@@ -183,6 +188,7 @@ class Application implements PublisherInterface
      */
     protected function init()
     {
+        $this->serviceContainer = ServiceContainer::i();
         $this->subscribers = new SubscribersCollection();
         $this->request = new Request($_SERVER);
         $this->router = Router::i();
@@ -901,6 +907,56 @@ class Application implements PublisherInterface
                                            'exceptionLine' => $e->getLine()]);
             }
         }
+    }
+
+    /**
+     * @param ServiceContainerInterface $serviceContainer
+     *
+     * @return $this
+     */
+    public function setServiceContainer(ServiceContainerInterface $serviceContainer)
+    {
+        $this->serviceContainer = $serviceContainer;
+
+        return $this;
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return mixed
+     */
+    public function getService($serviceName)
+    {
+        return $this->serviceContainer->get($serviceName);
+    }
+
+    /**
+     * @param string $serviceName
+     * @param mixed $value
+     * @param bool $singleton
+     */
+    public function registerService($serviceName, $value, $singleton = false)
+    {
+        $this->serviceContainer->register($serviceName, $value, $singleton);
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return bool
+     */
+    public function isServiceRegistered($serviceName)
+    {
+        return $this->serviceContainer->isRegistered($serviceName);
+    }
+
+    /**
+     * @return ServiceContainerInterface
+     */
+    public function getServiceContainer()
+    {
+        return $this->serviceContainer;
     }
 
 }
