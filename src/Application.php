@@ -196,7 +196,7 @@ class Application implements PublisherInterface
         $this->view = new View();
         $this->layout = new View();
         $this->initRoutes();
-
+        $this->initServices();
         return $this;
     }
 
@@ -909,6 +909,11 @@ class Application implements PublisherInterface
         }
     }
 
+    public function initServices()
+    {
+
+    }
+    
     /**
      * @param ServiceContainerInterface $serviceContainer
      *
