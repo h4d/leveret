@@ -41,6 +41,10 @@ class Request
      * @var array
      */
     protected $pathParts;
+    /**
+     * @var Headers
+     */
+    protected $headers;
 
     /**
      * @param array $requestData ($_SERVER)
@@ -399,6 +403,19 @@ class Request
     public function getParam($name, $defaut = null)
     {
         return (isset($this->getParams()[$name]) ? $this->getParams()[$name] : $defaut);
+    }
+
+    /**
+     * @return Headers
+     */
+    public function getHeaders()
+    {
+        if (is_null($this->headers))
+        {
+            $this->headers = new Headers($this->rawRequest);
+        }
+
+        return $this->headers;
     }
 
     /**
