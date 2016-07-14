@@ -46,7 +46,7 @@ class Headers
      */
     public function getHeader($key, $default = '')
     {
-        return (isset($this->headers[$key])) ? $this->headers[$key] : $default;
+        return ($this->hasHeader($key)) ? $this->headers[$key] : $default;
     }
 
     /**
@@ -55,6 +55,16 @@ class Headers
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasHeader($key)
+    {
+        return array_key_exists($key, $this->headers);
     }
 
     /**
