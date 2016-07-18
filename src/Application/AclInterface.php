@@ -10,4 +10,9 @@ interface AclInterface
      * @return bool
      */
     public function isAllowed();
+
+    /**
+     * @return string
+     */
+    public function getMessage();
 }
