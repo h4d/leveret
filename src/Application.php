@@ -203,6 +203,7 @@ class Application implements PublisherInterface
         $this->view = new View();
         $this->layout = new View();
         $this->initServices();
+        $this->initAcls();
         $this->initRoutes();
         return $this;
     }
@@ -947,6 +948,11 @@ class Application implements PublisherInterface
                                            'exceptionLine' => $e->getLine()]);
             }
         }
+    }
+
+    public function initAcls()
+    {
+
     }
 
     public function initServices()
