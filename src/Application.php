@@ -436,32 +436,35 @@ class Application implements PublisherInterface
      */
     protected function checkAcls($route)
     {
-        $controllerAcls = $routeAcls = [];
-        // Get ACLs for controllers
-        if (true == $route->hasController())
+        if (!$this->getAcls()->isEmpty())
         {
-            $controllerAcls = $this->getAcls()
-                                   ->getAclsForController($route->getControllerClassName(),
-                                                          $route->getControllerActionName());
-
-        }
-
-        // Get ACLs for routes
-        if (Route::DEFAULT_ROUTE_NAME != $route->getName() && !empty($route->getName()))
-        {
-            $routeAcls = $this->getAcls()->getAclsForRoute($route->getName());
-        }
-
-        $acls = array_merge($controllerAcls, $routeAcls);
-        if (count($acls) > 0)
-        {
-            /** @var AclInterface $acl */
-            foreach ($acls as $acl)
+            $controllerAcls = $routeAcls = [];
+            // Get ACLs for controllers
+            if (true == $route->hasController())
             {
-                $isAllowed = $acl->isAllowed();
-                if (false === $isAllowed)
+                $controllerAcls = $this->getAcls()
+                                       ->getAclsForController($route->getControllerClassName(),
+                                                              $route->getControllerActionName());
+
+            }
+
+            // Get ACLs for routes
+            if (Route::DEFAULT_ROUTE_NAME != $route->getName() && !empty($route->getName()))
+            {
+                $routeAcls = $this->getAcls()->getAclsForRoute($route->getName());
+            }
+
+            $acls = array_merge($controllerAcls, $routeAcls);
+            if (count($acls) > 0)
+            {
+                /** @var AclInterface $acl */
+                foreach ($acls as $acl)
                 {
-                    throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
+                    $isAllowed = $acl->isAllowed();
+                    if (false === $isAllowed)
+                    {
+                        throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
+                    }
                 }
             }
         }
