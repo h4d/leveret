@@ -2,12 +2,15 @@
 
 namespace H4D\Leveret;
 
+use H4D\Leveret\Application\AclInterface;
+use H4D\Leveret\Application\Acls;
 use H4D\Leveret\Application\Config;
 use H4D\Leveret\Application\Controller;
 use H4D\Leveret\Application\Route;
 use H4D\Leveret\Application\Router;
 use H4D\Leveret\Application\ServiceContainerInterface;
 use H4D\Leveret\Application\View;
+use H4D\Leveret\Exception\AclException;
 use H4D\Leveret\Exception\ApplicationException;
 use H4D\Leveret\Exception\AuthException;
 use H4D\Leveret\Exception\BadRequestException;
@@ -22,9 +25,9 @@ use H4D\Leveret\Http\Status;
 use H4D\Leveret\Service\ServiceContainer;
 use H4D\Leveret\Validation\ConstraintInterface;
 use H4D\Leveret\Validation\ConstraintValidator;
+use H4D\Patterns\Collections\SubscribersCollection;
 use H4D\Patterns\Interfaces\EventInterface;
 use H4D\Patterns\Interfaces\PublisherInterface;
-use H4D\Patterns\Collections\SubscribersCollection;
 use H4D\Patterns\Traits\SubscribersAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -33,7 +36,7 @@ use Psr\Log\NullLogger;
 class Application implements PublisherInterface
 {
     use SubscribersAwareTrait;
-    
+
     const ENV_PRODUCTION  = 'production';
     const ENV_DEVELOPMENT = 'development';
 
@@ -102,11 +105,17 @@ class Application implements PublisherInterface
      */
     protected $serviceContainer;
     /**
+     * @var Acls
+     */
+    protected $acls;
+
+    /**
      * @param string $configFile
      */
     public function __construct($configFile = null)
     {
         $this->logger = new NullLogger();
+        $this->acls = new Acls();
         $this->init();
         $this->loadConfig($configFile);
         $this->applyConfig();
@@ -195,8 +204,9 @@ class Application implements PublisherInterface
         $this->response = new Response();
         $this->view = new View();
         $this->layout = new View();
-        $this->initRoutes();
         $this->initServices();
+        $this->initAcls();
+        $this->initRoutes();
         return $this;
     }
 
@@ -422,6 +432,47 @@ class Application implements PublisherInterface
     /**
      * @param Route $route
      *
+     * @throws AclException
+     */
+    protected function checkAcls($route)
+    {
+        if (!$this->getAcls()->isEmpty())
+        {
+            $controllerAcls = $routeAcls = [];
+            // Get ACLs for controllers
+            if (true == $route->hasController())
+            {
+                $controllerAcls = $this->getAcls()
+                                       ->getAclsForController($route->getControllerClassName(),
+                                                              $route->getControllerActionName());
+
+            }
+
+            // Get ACLs for routes
+            if (Route::DEFAULT_ROUTE_NAME != $route->getName() && !empty($route->getName()))
+            {
+                $routeAcls = $this->getAcls()->getAclsForRoute($route->getName());
+            }
+
+            $acls = array_merge($controllerAcls, $routeAcls);
+            if (count($acls) > 0)
+            {
+                /** @var AclInterface $acl */
+                foreach ($acls as $acl)
+                {
+                    $isAllowed = $acl->isAllowed();
+                    if (false === $isAllowed)
+                    {
+                        throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Route $route
+     *
      * @throws ApplicationException
      */
     protected function dispatchRoute($route)
@@ -536,6 +587,8 @@ class Application implements PublisherInterface
         $this->getLogger()->info(sprintf('Dispatching route: %s',
                                          $this->getCurrentRoute()->getPattern()),
                                  $this->getCurrentRoute()->getNamedParams());
+        // Checks ACLs
+        $this->checkAcls($this->getCurrentRoute());
         // Authentication & Request validation
         $this->authenticateAndValidateRequest();
         // Predispatch
@@ -598,6 +651,11 @@ class Application implements PublisherInterface
         {
             $this->getLogger()->warning($e->getMessage());
             $this->setResponse(Response::createExceptionResponse($e, Status::HTTP_BAD_REQUEST));
+        }
+        catch(AclException $e)
+        {
+            $this->getLogger()->warning($e->getMessage());
+            $this->setResponse(Response::createExceptionResponse($e, Status::HTTP_UNAUTHORIZED));
         }
         catch(AuthException $e)
         {
@@ -909,11 +967,16 @@ class Application implements PublisherInterface
         }
     }
 
+    public function initAcls()
+    {
+
+    }
+
     public function initServices()
     {
 
     }
-    
+
     /**
      * @param ServiceContainerInterface $serviceContainer
      *
@@ -962,6 +1025,46 @@ class Application implements PublisherInterface
     public function getServiceContainer()
     {
         return $this->serviceContainer;
+    }
+
+    /**
+     * @return Acls
+     */
+    protected function getAcls()
+    {
+        return $this->acls;
+    }
+
+    /**
+     * @param AclInterface $acl
+     * @param string $controllerName
+     * @param array $applyToActions
+     * @param array $excludedActions
+     *
+     * @return $this
+     */
+    public function registerAclForController(AclInterface $acl,
+                                             $controllerName,
+                                             $applyToActions = ['*'],
+                                             $excludedActions = [])
+    {
+        $this->getAcls()->addAclForController($acl, $controllerName, $applyToActions, $excludedActions);
+
+        return $this;
+    }
+
+
+    /**
+     * @param AclInterface $acl
+     * @param string $routeName
+     *
+     * @return $this
+     */
+    public function registerAclForRoute(AclInterface $acl, $routeName)
+    {
+        $this->getAcls()->addAclForRoute($acl, $routeName);
+
+        return $this;
     }
 
 }

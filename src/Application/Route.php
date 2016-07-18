@@ -7,10 +7,12 @@ use H4D\Leveret\Validation\ConstraintInterface;
 
 class Route
 {
+    const DEFAULT_ROUTE_NAME = 'UnnamedRoute';
+
     /**
      * @var string
      */
-    protected $name;
+    protected $name = self::DEFAULT_ROUTE_NAME;
     /**
      * @var string
      */
@@ -141,7 +143,7 @@ class Route
      */
     public function getName()
     {
-        return is_string($this->name) ? $this->name : 'UnnamedRoute' ;
+        return $this->name;
     }
 
     /**
