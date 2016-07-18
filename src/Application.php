@@ -445,7 +445,7 @@ class Application implements PublisherInterface
                     $isAllowed = $acl->isAllowed();
                     if (false === $isAllowed)
                     {
-                        throw new AclException('Access not allowed!');
+                        throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
                     }
                 }
             }
