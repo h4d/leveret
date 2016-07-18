@@ -23,6 +23,14 @@ class Acls
     }
 
     /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return 0 >= (count($this->controllerAcls) + count($this->routeAcls));
+    }
+
+    /**
      * @param AclInterface $acl
      * @param string $controllerName
      * @param array $applyToActions
@@ -31,9 +39,9 @@ class Acls
      * @return $this
      */
     public function addAclForController(AclInterface $acl,
-                                             $controllerName,
-                                             $applyToActions = ['*'],
-                                             $excludedActions = [])
+                                        $controllerName,
+                                        $applyToActions = ['*'],
+                                        $excludedActions = [])
     {
         $this->controllerAcls[$controllerName][] = ['acl' => $acl,
                                                     'applyTo' => $applyToActions,
@@ -58,7 +66,9 @@ class Acls
             {
                 if (!in_array($action, $aclData['exclude']))
                 {
-                    if (in_array('*', $aclData['applyTo']) || in_array($action, $aclData['applyTo']))
+                    if (in_array('*', $aclData['applyTo'])
+                        || in_array($action, $aclData['applyTo'])
+                    )
                     {
                         $acls[] = $aclData['acl'];
                     }
