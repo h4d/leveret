@@ -3,6 +3,7 @@
 namespace H4D\Leveret;
 
 use H4D\Leveret\Application\AclInterface;
+use H4D\Leveret\Application\Acls;
 use H4D\Leveret\Application\Config;
 use H4D\Leveret\Application\Controller;
 use H4D\Leveret\Application\Route;
@@ -104,9 +105,9 @@ class Application implements PublisherInterface
      */
     protected $serviceContainer;
     /**
-     * @var AclInterface[]
+     * @var Acls
      */
-    protected $controllerAcls;
+    protected $acls;
 
     /**
      * @param string $configFile
@@ -114,6 +115,7 @@ class Application implements PublisherInterface
     public function __construct($configFile = null)
     {
         $this->logger = new NullLogger();
+        $this->acls = new Acls();
         $this->init();
         $this->loadConfig($configFile);
         $this->applyConfig();
@@ -434,20 +436,32 @@ class Application implements PublisherInterface
      */
     protected function checkAcls($route)
     {
+        $controllerAcls = $routeAcls = [];
+        // Get ACLs for controllers
         if (true == $route->hasController())
         {
-            $acls = $this->getAclsForController($route->getControllerClassName(),
-                                                $route->getControllerActionName());
-            if (is_array($acls) && count($acls) > 0)
+            $controllerAcls = $this->getAcls()
+                                   ->getAclsForController($route->getControllerClassName(),
+                                                          $route->getControllerActionName());
+
+        }
+
+        // Get ACLs for routes
+        if (Route::DEFAULT_ROUTE_NAME != $route->getName() && !empty($route->getName()))
+        {
+            $routeAcls = $this->getAcls()->getAclsForRoute($route->getName());
+        }
+
+        $acls = array_merge($controllerAcls, $routeAcls);
+        if (count($acls) > 0)
+        {
+            /** @var AclInterface $acl */
+            foreach ($acls as $acl)
             {
-                /** @var AclInterface $acl */
-                foreach ($acls as $acl)
+                $isAllowed = $acl->isAllowed();
+                if (false === $isAllowed)
                 {
-                    $isAllowed = $acl->isAllowed();
-                    if (false === $isAllowed)
-                    {
-                        throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
-                    }
+                    throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
                 }
             }
         }
@@ -1011,6 +1025,14 @@ class Application implements PublisherInterface
     }
 
     /**
+     * @return Acls
+     */
+    protected function getAcls()
+    {
+        return $this->acls;
+    }
+
+    /**
      * @param AclInterface $acl
      * @param string $controllerName
      * @param array $applyToActions
@@ -1023,40 +1045,23 @@ class Application implements PublisherInterface
                                              $applyToActions = ['*'],
                                              $excludedActions = [])
     {
-        $this->controllerAcls[$controllerName][] = ['acl' => $acl,
-                                                    'applyTo' => $applyToActions,
-                                                    'exclude' => $excludedActions];
+        $this->getAcls()->addAclForController($acl, $controllerName, $applyToActions, $excludedActions);
 
         return $this;
     }
 
 
     /**
-     * @param string $controllerName
-     * @param string $action
+     * @param AclInterface $acl
+     * @param string $routeName
      *
-     * @return array|AclInterface[]
+     * @return $this
      */
-    protected function getAclsForController($controllerName, $action)
+    public function registerAclForRoute(AclInterface $acl, $routeName)
     {
-        $acls = [];
-        if (array_key_exists($controllerName, $this->controllerAcls))
-        {
-            $auxAcls = $this->controllerAcls[$controllerName];
-            foreach ($auxAcls as $aclData)
-            {
-                if (!in_array($action, $aclData['exclude']))
-                {
-                    if (in_array('*', $aclData['applyTo']) || in_array($action, $aclData['applyTo']))
-                    {
-                        $acls[] = $aclData['acl'];
-                    }
-                }
+        $this->getAcls()->addAclForRoute($acl, $routeName);
 
-            }
-        }
-
-        return $acls;
+        return $this;
     }
 
 }
