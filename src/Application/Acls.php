@@ -9,11 +9,11 @@ class Acls
     /**
      * @var AclInterface[]
      */
-    protected $controllerAcls;
+    protected $controllerAcls = [];
     /**
      * @var AclInterface[]
      */
-    protected $routeAcls;
+    protected $routeAcls = [];
 
     /**
      * Acls constructor.
