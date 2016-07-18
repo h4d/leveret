@@ -3,7 +3,6 @@
 namespace H4D\Leveret\Application;
 
 use H4D\Leveret\Filter\FilterInterface;
-use H4D\Leveret\Filter\Filters\DefaultFilter;
 use H4D\Leveret\Validation\ConstraintInterface;
 
 class Route
@@ -368,7 +367,7 @@ class Route
     }
 
     /**
-     * @return DefaultFilter
+     * @return FilterInterface
      */
     public function getDefaultFilter()
     {
