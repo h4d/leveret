@@ -78,7 +78,7 @@ class Acls
      */
     public function addAclForRoute(AclInterface $acl, $routeName)
     {
-        $this->routeAcls[$routeName][] = ['acl' => $acl];
+        $this->routeAcls[$routeName][] = $acl;
 
         return $this;
     }
