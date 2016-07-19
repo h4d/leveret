@@ -460,6 +460,23 @@ class Application implements PublisherInterface
     }
 
     /**
+     * @param string $url
+     * @param int $statusCode
+     */
+    public function redirect($url, $statusCode = Status::HTTP_SEE_OTHER)
+    {
+        if (strpos($url, 'http') !== 0)
+        {
+            $url = sprintf('%://%s/%s',
+                           $this->request->getProtocol(),
+                           $this->request->getHost(),
+                           ltrim($url, '/'));
+        }
+        header('Location: ' . $url, true, $statusCode);
+        die();
+    }
+
+    /**
      * @param Route $route
      *
      * @throws AclException
@@ -493,7 +510,20 @@ class Application implements PublisherInterface
                     $isAllowed = $acl->isAllowed();
                     if (false === $isAllowed)
                     {
-                        throw new AclException(sprintf('Access not allowed: %s', $acl->getMessage()));
+                        $msg = $acl->hasMessage()
+                            ? sprintf('Access not allowed: %s', $acl->getMessage())
+                            : 'Access not allowed!';
+                        $this->logger->debug($msg, ['acl' => get_class($acl)]);
+                        if ($acl->hasRedirectUrl())
+                        {
+                            $this->logger->debug('ACL redirection!', ['acl' => get_class($acl),
+                                                                      'url' => $acl->getRedirectUrl()]);
+                            $this->redirect($acl->getRedirectUrl(), Status::HTTP_UNAUTHORIZED);
+                        }
+                        else
+                        {
+                            throw new AclException($msg);
+                        }
                     }
                 }
             }
