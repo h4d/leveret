@@ -256,12 +256,7 @@ class Controller implements PublisherInterface
      */
     protected function redirect($url, $statusCode = Status::HTTP_SEE_OTHER)
     {
-        if (strpos($url, 'http') !== 0)
-        {
-            $url = $this->request->getProtocol().'://'.$this->request->getHost().'/'.ltrim($url, '/');
-        }
-        header('Location: ' . $url, true, $statusCode);
-        die();
+        $this->getApp()->redirect($url, $statusCode);
     }
 
     /**
