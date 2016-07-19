@@ -114,12 +114,25 @@ class Application implements PublisherInterface
      */
     public function __construct($configFile = null)
     {
+        // Load config file
+        $this->loadConfig($configFile);
+
+        // Init required stuff
         $this->logger = new NullLogger();
         $this->acls = new Acls();
-        $this->init();
-        $this->loadConfig($configFile);
+        $this->serviceContainer = ServiceContainer::i();
+        $this->subscribers = new SubscribersCollection();
+        $this->request = new Request($_SERVER);
+        $this->router = Router::i();
+        $this->response = new Response();
+        $this->view = new View();
+        $this->layout = new View();
+
+        // Apply config
         $this->applyConfig();
 
+        // Init
+        $this->init();
     }
 
     /**
@@ -160,7 +173,49 @@ class Application implements PublisherInterface
         $this->defaultInputFilter = new DefaultFilter($this->config->getDefaultInputFilterType());
         $this->getRequest()->setDefaultFilter($this->defaultInputFilter);
 
-        // Register routes defined in config file
+        return $this;
+    }
+
+    protected function init()
+    {
+        // Init services
+        $this->initServices();
+        // Init ACLs
+        $this->initAcls();
+        // Init routes
+        $this->initRoutesDefinedInConfigFile();
+        $this->initRoutes();
+    }
+
+    /**
+     * Method for registering app services.
+     */
+    protected function initServices()
+    {
+
+    }
+
+    /**
+     * Method for registering app ACLs.
+     */
+    protected function initAcls()
+    {
+
+    }
+
+    /**
+     * Method for registering app routes.
+     */
+    protected function initRoutes()
+    {
+
+    }
+
+    /**
+     * Register routes defined in the app config file
+     */
+    protected function initRoutesDefinedInConfigFile()
+    {
         if (true == $this->config->getRegisterRoutesDefinedInConfigFile())
         {
             $configFileRoutes = $this->config->getConfigFileRoutes();
@@ -188,26 +243,6 @@ class Application implements PublisherInterface
                 }
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function init()
-    {
-        $this->serviceContainer = ServiceContainer::i();
-        $this->subscribers = new SubscribersCollection();
-        $this->request = new Request($_SERVER);
-        $this->router = Router::i();
-        $this->response = new Response();
-        $this->view = new View();
-        $this->layout = new View();
-        $this->initServices();
-        $this->initAcls();
-        $this->initRoutes();
-        return $this;
     }
 
     /**
@@ -386,11 +421,6 @@ class Application implements PublisherInterface
     public function registerRoute($method, $route)
     {
         return $this->router->registerRoute($method, $route);
-    }
-
-    public function initRoutes()
-    {
-
     }
 
     protected function preRoute()
@@ -965,16 +995,6 @@ class Application implements PublisherInterface
                                            'exceptionLine' => $e->getLine()]);
             }
         }
-    }
-
-    public function initAcls()
-    {
-
-    }
-
-    public function initServices()
-    {
-
     }
 
     /**
