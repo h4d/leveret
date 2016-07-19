@@ -518,7 +518,7 @@ class Application implements PublisherInterface
                         {
                             $this->logger->debug('ACL redirection!', ['acl' => get_class($acl),
                                                                       'url' => $acl->getRedirectUrl()]);
-                            $this->redirect($acl->getRedirectUrl(), Status::HTTP_UNAUTHORIZED);
+                            $this->redirect($acl->getRedirectUrl(), Status::HTTP_SEE_OTHER);
                         }
                         else
                         {
