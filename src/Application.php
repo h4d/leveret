@@ -467,7 +467,7 @@ class Application implements PublisherInterface
     {
         if (strpos($url, 'http') !== 0)
         {
-            $url = sprintf('%://%s/%s',
+            $url = sprintf('%s://%s/%s',
                            $this->request->getProtocol(),
                            $this->request->getHost(),
                            ltrim($url, '/'));
