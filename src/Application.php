@@ -150,7 +150,7 @@ class Application implements PublisherInterface
         $errorHandler = $this->config->getErrorHandler();
         set_error_handler(array(get_class($this), $errorHandler));
 
-        // Ser content type
+        // Set content type
         $this->setContentType($this->config->getDefaultContentType());
 
         // Set paths
