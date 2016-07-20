@@ -89,6 +89,14 @@ class Request
     /**
      * @return string
      */
+    public function getUserAgent()
+    {
+        return isset($this->rawRequest['HTTP_USER_AGENT']) ? $this->rawRequest['HTTP_USER_AGENT'] : '';
+    }
+
+    /**
+     * @return string
+     */
     public function getRemoteAddress()
     {
         return isset($this->rawRequest['REMOTE_ADDR']) ? $this->rawRequest['REMOTE_ADDR'] : '';
