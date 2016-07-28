@@ -5,6 +5,7 @@
 <dl>
     <dt>Name</dt><dd><?php echo $app->getName();?></dd>
     <dt>Environment</dt><dd><?php echo $app->getEnvironment();?></dd>
+    <dt>Config file</dt><dd><?php echo $app->getConfig()->getConfigFilePath();?></dd>
 </dl>
 
 <h2>System info</h2>
