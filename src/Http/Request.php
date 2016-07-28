@@ -89,6 +89,14 @@ class Request
     /**
      * @return string
      */
+    public function getHttpHost()
+    {
+        return isset($this->rawRequest['HTTP_HOST']) ? $this->rawRequest['HTTP_HOST'] : '';
+    }
+
+    /**
+     * @return string
+     */
     public function getUserAgent()
     {
         return isset($this->rawRequest['HTTP_USER_AGENT']) ? $this->rawRequest['HTTP_USER_AGENT'] : '';
@@ -231,7 +239,7 @@ class Request
      */
     public function getProtocol()
     {
-        return (false !== stripos($_SERVER['SERVER_PROTOCOL'], 'https')) ? 'https' : 'http';
+        return (false !== stripos($this->rawRequest['SERVER_PROTOCOL'], 'https')) ? 'https' : 'http';
     }
 
     /**
