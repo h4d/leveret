@@ -19,7 +19,8 @@
     "psr/log": "~1.0",
     "h4d/template": "^1.0",
     "h4d/i18n": "^1.0",
-    "h4d/patterns": "^1.0.7"
+    "h4d/patterns": "^1.0.7",
+    "retrinko/ini": "^1.0"
   },
   "require-dev": {
     "h4d/validator": "^1.0",
