@@ -5,12 +5,15 @@
 <dl>
     <dt>Name</dt><dd><?php echo $app->getName();?></dd>
     <dt>Environment</dt><dd><?php echo $app->getEnvironment();?></dd>
+    <dt>Config file</dt><dd><?php echo $app->getConfig()->getConfigFilePath();?></dd>
 </dl>
 
 <h2>System info</h2>
 <dl>
-    <dt>Date</dt><dd><?php echo date(DATE_ISO8601);?></dd>
-    <dt>Time zone</dt><dd><?php echo date_default_timezone_get();?></dd>
-    <dt>IP address</dt><dd><?php echo $_SERVER['SERVER_ADDR'];?></dd>
+    <dt>Host</dt><dd><?php echo $app->getRequest()->getHttpHost();?></dd>
+</dl>
+
+<h2>PHP info</h2>
+<dl>
     <dt>PHP version</dt><dd><?php echo phpversion();?></dd>
 </dl>

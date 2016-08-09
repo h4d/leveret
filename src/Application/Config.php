@@ -3,97 +3,52 @@
 namespace H4D\Leveret\Application;
 
 use H4D\Leveret\Application;
-use H4D\Leveret\Exception\FileNotFoundException;
-use H4D\Leveret\Exception\FileNotReadableException;
-use H4D\Leveret\Filter\FilterInterface;
 use H4D\Leveret\Http\Headers;
+use Retrinko\Ini\IniFile;
 
-class Config
+class Config extends IniFile
 {
+
+    const SECTION_APPLICATION = 'application';
+    const SECTION_VIEWS       = 'views';
+    const SECTION_ROUTES      = 'routes';
+
     /**
      * @var string
      */
-    protected $environment = Application::ENV_PRODUCTION;
-    /**
-     * @var string
-     */
-    protected $applicationPath;
-    /**
-     * @var string
-     */
-    protected $applicationName = 'NoNamedApp';
-    /**
-     * @var string
-     */
-    protected $viewsPath;
-    /**
-     * @var string
-     */
-    protected $errorHandler;
-    /**
-     * @var string
-     */
-    protected $defaultContentType = Headers::CONTENT_TYPE_TEXT_HTML;
-    /**
-     * @var int
-     */
-    protected $defaultInputFilterType = FILTER_UNSAFE_RAW;
-    /**
-     * @var bool
-     */
-    protected $registerRoutesDefinedInConfigFile = false;
+    protected $iniFilePath;
     /**
      * @var array
      */
     protected $parsedConfigFileRoutes;
 
     /**
-     * @param array $data
+     * Config constructor.
+     *
+     * @param null|string $file
      */
-    protected function __construct(array $data)
+    public function __construct($file)
     {
-        $this->environment = $data['application']['environment'];
-        $this->applicationPath = $data['application']['path'];
-        $this->errorHandler = $data['application']['errorHandler'];
-        $this->viewsPath = $data['views']['path'];
-        $this->defaultContentType = $data['application']['defaultContentType'];
-        if (isset($data['application']['defaultInputFilterType']))
-        {
-            $this->defaultInputFilterType = $data['application']['defaultInputFilterType'];
-        }
-        if (isset($data['application']['registerRoutesDefinedInConfigFile']))
-        {
-            $this->registerRoutesDefinedInConfigFile = (bool)$data['application']['registerRoutesDefinedInConfigFile'];
-        }
-        if (isset($data['routes']))
-        {
-            $this->configFileRoutes = $data['routes'];
-        }
-        if (isset($data['application']['name']))
-        {
-            $this->applicationName = $data['application']['name'];
-        }
+        parent::__construct($file);
+        $this->iniFilePath = $file;
     }
 
     /**
-     * @param string $configFile Config file path
+     * @param string $file
      *
      * @return Config
-     * @throws FileNotFoundException
-     * @throws FileNotReadableException
      */
-    public static function load($configFile)
+    public static function load($file)
     {
-        if (!is_file($configFile))
-        {
-            throw new FileNotFoundException(sprintf('File "%s" not found.', $configFile));
-        }
-        if (!is_readable($configFile))
-        {
-            throw new FileNotReadableException(sprintf('File "%s" is not readable.', $configFile));
-        }
-        $data = parse_ini_file($configFile, true);
-        return new self($data);
+        return new self($file);
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigFilePath()
+    {
+        return $this->iniFilePath;
     }
 
     /**
@@ -101,37 +56,14 @@ class Config
      */
     public function getEnvironment()
     {
-        return $this->environment;
+        return $this->get(self::SECTION_APPLICATION, 'environment', Application::ENV_DEVELOPMENT);
     }
-
-    /**
-     * @param string $environment
-     *
-     * @return $this
-     */
-    public function setEnvironment($environment)
-    {
-        $this->environment = $environment;
-        return $this;
-    }
-
     /**
      * @return string
      */
     public function getApplicationPath()
     {
-        return $this->applicationPath;
-    }
-
-    /**
-     * @param string $applicationPath
-     *
-     * @return $this
-     */
-    public function setApplicationPath($applicationPath)
-    {
-        $this->applicationPath = $applicationPath;
-        return $this;
+        return $this->get(self::SECTION_APPLICATION, 'path', './');
     }
 
     /**
@@ -139,39 +71,15 @@ class Config
      */
     public function getApplicationName()
     {
-        return $this->applicationName;
+        return $this->get(self::SECTION_APPLICATION, 'name', 'UnNamedApp');
     }
-
-    /**
-     * @param string $applicationName
-     *
-     * @return $this
-     */
-    public function setApplicationName($applicationName)
-    {
-        $this->applicationName = $applicationName;
-
-        return $this;
-    }
-
 
     /**
      * @return string
      */
     public function getViewsPath()
     {
-        return $this->viewsPath;
-    }
-
-    /**
-     * @param string $viewsPath
-     *
-     * @return $this
-     */
-    public function setViewsPath($viewsPath)
-    {
-        $this->viewsPath = $viewsPath;
-        return $this;
+        return $this->get(self::SECTION_VIEWS, 'path', './');
     }
 
     /**
@@ -179,18 +87,7 @@ class Config
      */
     public function getErrorHandler()
     {
-        return $this->errorHandler;
-    }
-
-    /**
-     * @param string $errorHandler
-     *
-     * @return $this
-     */
-    public function setErrorHandler($errorHandler)
-    {
-        $this->errorHandler = $errorHandler;
-        return $this;
+        return $this->get(self::SECTION_APPLICATION, 'errorHandler', 'errorHandler');
     }
 
     /**
@@ -198,26 +95,16 @@ class Config
      */
     public function getDefaultContentType()
     {
-        return $this->defaultContentType;
+        return $this->get(self::SECTION_APPLICATION, 'defaultContentType',
+                          Headers::CONTENT_TYPE_TEXT_HTML);
     }
 
     /**
-     * @param string $defaultContentType
-     *
-     * @return $this
-     */
-    public function setDefaultContentType($defaultContentType)
-    {
-        $this->defaultContentType = $defaultContentType;
-        return $this;
-    }
-
-    /**
-     * @return FilterInterface
+     * @return int
      */
     public function getDefaultInputFilterType()
     {
-        return $this->defaultInputFilterType;
+        return $this->get(self::SECTION_APPLICATION, 'defaultInputFilterType', FILTER_UNSAFE_RAW);
     }
 
     /**
@@ -225,18 +112,7 @@ class Config
      */
     public function getRegisterRoutesDefinedInConfigFile()
     {
-        return $this->registerRoutesDefinedInConfigFile;
-    }
-
-    /**
-     * @param boolean $registerRoutesDefinedInConfigFile
-     *
-     * @return Config
-     */
-    public function setRegisterRoutesDefinedInConfigFile($registerRoutesDefinedInConfigFile)
-    {
-        $this->registerRoutesDefinedInConfigFile = $registerRoutesDefinedInConfigFile;
-        return $this;
+        return $this->get(self::SECTION_APPLICATION, 'registerRoutesDefinedInConfigFile', false);
     }
 
     /**
@@ -245,10 +121,15 @@ class Config
     protected function parseConfigFileRoutes()
     {
         $parsedRoutes = [];
-        foreach($this->configFileRoutes as $name=>$data)
+        if ($this->hasSection(self::SECTION_ROUTES))
         {
-            $parsedRoutes[$name] = Application\Config\Route::create($data);
+            $routes = $this->getSection(self::SECTION_ROUTES)->toArray();
+            foreach($routes as $name=>$data)
+            {
+                $parsedRoutes[$name] = Application\Config\Route::create($data);
+            }
         }
+
         return $parsedRoutes;
     }
 

@@ -31,6 +31,7 @@ use H4D\Patterns\Interfaces\PublisherInterface;
 use H4D\Patterns\Traits\SubscribersAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Retrinko\Ini\Exceptions\FileException;
 
 
 class Application implements PublisherInterface
@@ -136,11 +137,10 @@ class Application implements PublisherInterface
     }
 
     /**
-     * @param $configFile
+     * @param string $configFile
      *
      * @return $this
-     * @throws Exception\FileNotFoundException
-     * @throws Exception\FileNotReadableException
+     * @throws FileException
      */
     protected function loadConfig($configFile)
     {
@@ -157,20 +157,20 @@ class Application implements PublisherInterface
     protected function applyConfig()
     {
         // Set app name
-        $this->setName($this->config->getApplicationName());
+        $this->setName($this->getConfig()->getApplicationName());
 
         // Set error handler
-        $errorHandler = $this->config->getErrorHandler();
+        $errorHandler = $this->getConfig()->getErrorHandler();
         set_error_handler(array(get_class($this), $errorHandler));
 
         // Set content type
-        $this->setContentType($this->config->getDefaultContentType());
+        $this->setContentType($this->getConfig()->getDefaultContentType());
 
         // Set paths
-        $this->setViewTemplatesDirectory($this->config->getViewsPath());
+        $this->setViewTemplatesDirectory($this->getConfig()->getViewsPath());
 
         // Default input filter
-        $this->defaultInputFilter = new DefaultFilter($this->config->getDefaultInputFilterType());
+        $this->defaultInputFilter = new DefaultFilter($this->getConfig()->getDefaultInputFilterType());
         $this->getRequest()->setDefaultFilter($this->defaultInputFilter);
 
         return $this;
@@ -216,9 +216,9 @@ class Application implements PublisherInterface
      */
     protected function initRoutesDefinedInConfigFile()
     {
-        if (true == $this->config->getRegisterRoutesDefinedInConfigFile())
+        if (true == $this->getConfig()->getRegisterRoutesDefinedInConfigFile())
         {
-            $configFileRoutes = $this->config->getConfigFileRoutes();
+            $configFileRoutes = $this->getConfig()->getConfigFileRoutes();
             foreach($configFileRoutes as $name=>$configFileRoute)
             {
                 if ($configFileRoute->isControllerActionCallback())
@@ -243,6 +243,14 @@ class Application implements PublisherInterface
                 }
             }
         }
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**
@@ -271,7 +279,7 @@ class Application implements PublisherInterface
      */
     public function getEnvironment()
     {
-        return $this->config->getEnvironment();
+        return $this->getConfig()->getEnvironment();
     }
 
     /**
