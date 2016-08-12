@@ -2,6 +2,8 @@
 
 namespace H4D\Leveret\Application;
 
+use H4D\I18n\DateDecorator;
+use H4D\I18n\DateDecoratorAwareTrait;
 use H4D\I18n\NullTranslator;
 use H4D\I18n\TranslatorAwareTrait;
 use H4D\Template\TemplateTrait;
@@ -12,10 +14,12 @@ class View
 
     use TemplateTrait;
     use TranslatorAwareTrait;
+    use DateDecoratorAwareTrait;
 
     public function __construct()
     {
         $this->translator = new NullTranslator();
+        $this->dateDecorator = new DateDecorator();
     }
 
     /**
@@ -59,5 +63,72 @@ class View
         }
 
         return $partial;
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $formatAlias
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function formatDateTime(\DateTime $date, $formatAlias, $locale = '')
+    {
+        return $this->dateDecorator->getFormattedDate($date, $formatAlias, $locale);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function date(\DateTime $date, $locale = '')
+    {
+        return $this->dateDecorator->getDate($date, $locale);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function dateTime(\DateTime $date, $locale = '')
+    {
+        return $this->dateDecorator->getDateTime($date, $locale);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function timestamp(\DateTime $date, $locale = '')
+    {
+        return $this->dateDecorator->getTimestamp($date, $locale);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function time(\DateTime $date, $locale = '')
+    {
+        return $this->dateDecorator->getTime($date, $locale);
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function timeShort(\DateTime $date, $locale = '')
+    {
+        return $this->dateDecorator->getShortTime($date, $locale);
     }
 }
