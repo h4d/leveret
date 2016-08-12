@@ -72,7 +72,7 @@ class View
      *
      * @return string
      */
-    public function formatDateTime($date, $formatAlias, $locale = '')
+    public function formatDate($date, $formatAlias, $locale = '')
     {
         $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getFormattedDate($date, $formatAlias, $locale);
@@ -130,35 +130,12 @@ class View
      * @param \DateTime|string $date
      * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
     public function timeShort($date, $locale = '')
     {
         $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getShortTime($date, $locale);
+        return $this->dateDecorator->getTimeShort($date, $locale);
     }
 
-    /**
-     * @param \DateTime|string $date
-     * @param string $locale
-     *
-     * @return mixed
-     */
-    public function timeZone($date, $locale = '')
-    {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getTimeZone($date, $locale);
-    }
-
-    /**
-     * @param \DateTime|string $date
-     * @param string $locale
-     *
-     * @return mixed
-     */
-    public function dateTimeAndTimeZone($date, $locale = '')
-    {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getDateTimeAndTimeZone($date, $locale);
-    }
 }
