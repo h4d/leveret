@@ -2,6 +2,8 @@
 
 namespace H4D\Leveret\Application;
 
+use H4D\I18n\DateDecorator;
+use H4D\I18n\DateDecoratorAwareTrait;
 use H4D\I18n\NullTranslator;
 use H4D\I18n\TranslatorAwareTrait;
 use H4D\Template\TemplateTrait;
@@ -12,10 +14,12 @@ class View
 
     use TemplateTrait;
     use TranslatorAwareTrait;
+    use DateDecoratorAwareTrait;
 
     public function __construct()
     {
         $this->translator = new NullTranslator();
+        $this->dateDecorator = new DateDecorator();
     }
 
     /**
@@ -59,5 +63,78 @@ class View
         }
 
         return $partial;
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $formatAlias
+     * @param string $locale
+     *
+     * @return string
+     */
+    public function formatDateTime($date, $formatAlias, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getFormattedDate($date, $formatAlias, $locale);
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return string
+     */
+    public function date($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getDate($date, $locale);
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return string
+     */
+    public function dateTime($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getDateTime($date, $locale);
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return string
+     */
+    public function timestamp($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getTimestamp($date, $locale);
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return string
+     */
+    public function time($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getTime($date, $locale);
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function timeShort($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getShortTime($date, $locale);
     }
 }
