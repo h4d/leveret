@@ -45,6 +45,9 @@ class Application implements PublisherInterface
     const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
     const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
 
+    const TRANSLATION_SERVICE_NAME     = 'Translator';
+    const DATE_DECORATION_SERVICE_NAME = 'DateDecorator';
+
     /**
      * @var Router
      */
@@ -126,8 +129,6 @@ class Application implements PublisherInterface
         $this->request = new Request($_SERVER);
         $this->router = Router::i();
         $this->response = new Response();
-        $this->view = new View();
-        $this->layout = new View();
 
         // Apply config
         $this->applyConfig();
@@ -185,6 +186,9 @@ class Application implements PublisherInterface
         // Init routes
         $this->initRoutesDefinedInConfigFile();
         $this->initRoutes();
+        // Init views
+        $this->initView();
+        $this->initLayout();
     }
 
     /**
@@ -242,6 +246,33 @@ class Application implements PublisherInterface
                     }
                 }
             }
+        }
+    }
+
+    protected function initView()
+    {
+        $this->view = new View();
+        if ($this->isServiceRegistered(self::TRANSLATION_SERVICE_NAME))
+        {
+            $this->view->setTranslator($this->getService(self::TRANSLATION_SERVICE_NAME));
+        }
+        if ($this->isServiceRegistered(self::DATE_DECORATION_SERVICE_NAME))
+        {
+            $this->view->setDateDecorator($this->getService(self::DATE_DECORATION_SERVICE_NAME));
+        }
+
+    }
+
+    protected function initLayout()
+    {
+        $this->layout = new View();
+        if ($this->isServiceRegistered(self::TRANSLATION_SERVICE_NAME))
+        {
+            $this->layout->setTranslator($this->getService(self::TRANSLATION_SERVICE_NAME));
+        }
+        if ($this->isServiceRegistered(self::DATE_DECORATION_SERVICE_NAME))
+        {
+            $this->layout->setDateDecorator($this->getService(self::DATE_DECORATION_SERVICE_NAME));
         }
     }
 
