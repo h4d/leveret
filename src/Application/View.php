@@ -66,69 +66,75 @@ class View
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|string $date
      * @param string $formatAlias
      * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
-    public function formatDateTime(\DateTime $date, $formatAlias, $locale = '')
+    public function formatDateTime($date, $formatAlias, $locale = '')
     {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getFormattedDate($date, $formatAlias, $locale);
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|string $date
      * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
-    public function date(\DateTime $date, $locale = '')
+    public function date($date, $locale = '')
     {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getDate($date, $locale);
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|string $date
      * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
-    public function dateTime(\DateTime $date, $locale = '')
+    public function dateTime($date, $locale = '')
     {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getDateTime($date, $locale);
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|string $date
      * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
-    public function timestamp(\DateTime $date, $locale = '')
+    public function timestamp($date, $locale = '')
     {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getTimestamp($date, $locale);
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|string $date
      * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
-    public function time(\DateTime $date, $locale = '')
+    public function time($date, $locale = '')
     {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getTime($date, $locale);
     }
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|string $date
      * @param string $locale
      *
      * @return mixed
      */
-    public function timeShort(\DateTime $date, $locale = '')
+    public function timeShort($date, $locale = '')
     {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getShortTime($date, $locale);
     }
 }
