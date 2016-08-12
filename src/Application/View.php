@@ -137,4 +137,28 @@ class View
         $date = (is_string($date)) ? new \DateTime($date) : $date;
         return $this->dateDecorator->getShortTime($date, $locale);
     }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function timeZone($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getTimeZone($date, $locale);
+    }
+
+    /**
+     * @param \DateTime|string $date
+     * @param string $locale
+     *
+     * @return mixed
+     */
+    public function dateTimeAndTimeZone($date, $locale = '')
+    {
+        $date = (is_string($date)) ? new \DateTime($date) : $date;
+        return $this->dateDecorator->getDateTimeAndTimeZone($date, $locale);
+    }
 }
