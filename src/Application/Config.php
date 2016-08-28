@@ -120,7 +120,7 @@ class Config extends IniFile
      */
     public function getMaintenanceTemplate()
     {
-        return $this->get(self::SECTION_APPLICATION, 'maintenanceTemplate', '');
+        return $this->get(self::SECTION_VIEWS, 'maintenanceTemplate', '');
     }
 
     /**
