@@ -118,9 +118,9 @@ class Config extends IniFile
     /**
      * @return string
      */
-    public function getMaintenanceUrl()
+    public function getMaintenanceTemplate()
     {
-        return $this->get(self::SECTION_APPLICATION, 'maintenanceUrl', '');
+        return $this->get(self::SECTION_APPLICATION, 'maintenanceTemplate', '');
     }
 
     /**
