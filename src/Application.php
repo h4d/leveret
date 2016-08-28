@@ -15,6 +15,7 @@ use H4D\Leveret\Exception\ApplicationException;
 use H4D\Leveret\Exception\AuthException;
 use H4D\Leveret\Exception\BadRequestException;
 use H4D\Leveret\Exception\ConfigErrorException;
+use H4D\Leveret\Exception\MaintenanceException;
 use H4D\Leveret\Exception\RouteNotFoundException;
 use H4D\Leveret\Exception\ViewException;
 use H4D\Leveret\Filter\FilterInterface;
@@ -465,7 +466,18 @@ class Application implements PublisherInterface
 
     protected function preRoute()
     {
-
+        if (self::ENV_MAINTENANCE === $this->getEnvironment())
+        {
+            $maintenanceUrl = $this->getConfig()->getEnvironment();
+            if (!empty($maintenanceUrl))
+            {
+                $this->redirect($maintenanceUrl);
+            }
+            else
+            {
+                throw new MaintenanceException('Application in maintenance mode!');
+            }
+        }
     }
 
     protected function postRoute()
