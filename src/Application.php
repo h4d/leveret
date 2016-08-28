@@ -20,6 +20,7 @@ use H4D\Leveret\Exception\RouteNotFoundException;
 use H4D\Leveret\Exception\ViewException;
 use H4D\Leveret\Filter\FilterInterface;
 use H4D\Leveret\Filter\Filters\DefaultFilter;
+use H4D\Leveret\Http\Headers;
 use H4D\Leveret\Http\Request;
 use H4D\Leveret\Http\Response;
 use H4D\Leveret\Http\Status;
@@ -464,19 +465,14 @@ class Application implements PublisherInterface
         return $this->router->registerRoute($method, $route);
     }
 
+    /**
+     * @throws MaintenanceException
+     */
     protected function preRoute()
     {
         if (self::ENV_MAINTENANCE === $this->getEnvironment())
         {
-            $maintenanceUrl = $this->getConfig()->getEnvironment();
-            if (!empty($maintenanceUrl))
-            {
-                $this->redirect($maintenanceUrl);
-            }
-            else
-            {
-                throw new MaintenanceException('Application in maintenance mode!');
-            }
+            throw new MaintenanceException('Application in maintenance mode!');
         }
     }
 
@@ -785,6 +781,21 @@ class Application implements PublisherInterface
             $this->getLogger()->error('View exception!: ' . $e->getMessage());
             $this->setResponse(Response::createExceptionResponse($e, Status::HTTP_INTERNAL_SERVER_ERROR,
                                                                  $this->inDevelopmentEnvironment()));
+        }
+        catch(MaintenanceException $e)
+        {
+            $this->getLogger()->info('Mainenance exception!: ' . $e->getMessage());
+            $maintenanceTemplate = $this->getConfig()->getMaintenanceTemplate();
+            if (!empty($maintenanceTemplate))
+            {
+                $this->setContentType(Headers::CONTENT_TYPE_TEXT_HTML);
+                $this->render($this->getConfig()->getMaintenanceTemplate());
+            }
+            else
+            {
+                $this->setResponse(Response::createExceptionResponse($e, Status::HTTP_SERVICE_UNAVAILABLE,
+                                                                     $this->inDevelopmentEnvironment()));
+            }
         }
         catch(\Exception $e)
         {
