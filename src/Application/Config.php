@@ -116,6 +116,14 @@ class Config extends IniFile
     }
 
     /**
+     * @return string
+     */
+    public function getMaintenanceUrl()
+    {
+        return $this->get(self::SECTION_APPLICATION, 'maintenanceUrl', '');
+    }
+
+    /**
      * @return array
      */
     protected function parseConfigFileRoutes()
