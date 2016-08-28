@@ -40,6 +40,7 @@ class Application implements PublisherInterface
 
     const ENV_PRODUCTION  = 'production';
     const ENV_DEVELOPMENT = 'development';
+    const ENV_MAINTENANCE = 'maintenance';
 
     const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
     const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
