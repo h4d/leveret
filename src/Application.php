@@ -118,14 +118,30 @@ class Application implements PublisherInterface
 
     /**
      * @param string $configFile
+     * @param LoggerInterface $logger
+     *
+     * @throws ApplicationException
      */
-    public function __construct($configFile = null)
+    public function __construct($configFile = null, $logger = null)
     {
         // Load config file
         $this->loadConfig($configFile);
+        // Set application's logger
+        if (is_null($logger))
+        {
+            $this->logger = new NullLogger();
+        }
+        elseif($logger instanceof LoggerInterface)
+        {
+            $this->logger = $logger;
+        }
+        else
+        {
+            throw new ApplicationException(sprintf('Invalid logger given! Logger must be an instace of %s.',
+                                                   LoggerInterface::class));
+        }
 
         // Init required stuff
-        $this->logger = new NullLogger();
         $this->acls = new Acls();
         $this->serviceContainer = ServiceContainer::i();
         $this->subscribers = new SubscribersCollection();
@@ -334,9 +350,8 @@ class Application implements PublisherInterface
     {
         if (false == $logger instanceof LoggerInterface)
         {
-            throw new ApplicationException(
-                sprintf('Error setting application logger. "%s" is not an instance of ' .
-                        'Psr\Log\LoggerInterface.', get_class($logger)));
+            throw new ApplicationException(sprintf('Invalid logger given! Logger must be an instace of %s.',
+                                                   LoggerInterface::class));
         }
 
         $this->logger = $logger;
