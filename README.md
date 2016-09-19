@@ -520,6 +520,130 @@ Si se quiere retirar un listener se usaría el método _dettachSubscriber(Subscr
 Los controllers disponen de los mismos métodos para agregar o retirar listeners. Todos los eventos que se publiquen desde un controller se propagan a la aplicación.
 
 
+## Inyector de dependencias / contenedor de servicios
+
+Leveret incluye un contenedor de servicios muy simple que soporta los siguientes tipos:
+
+ - Instances
+ - Callables
+ - KeyValue
+ - Resources
+ 
+Para registrar un servicio en la aplicación puede usarse el  el método **registerService(string $serviceName, mixed $value, $singleton = false)** del objeto aplicación. En donde:
+
+- $serviceName: Es un string con el nombre que queremos asignar al servicio.
+- $value: Es el servicio en sí, y puede ser: un callable, una instancia, un resource o un par clave-valor.
+- $singleton: Sólo debe emplearse si $value es un callable y hace que la función callable se ejecute una sola vez, devolviéndose el mismo valor de retorno en llamadas posteriores.
+
+Para recuperar los servicios registrados el objeto aplicación dispone del método **getService(string $serviceName)** en donde:
+
+- $serviceName: Es el nombre del servicio que hemos registrado previamente.
+
+Otros métodos útiles en relación con los servicios son:
+
+- bool isServiceRegistered(string $serviceName): Devuelve true o false si el servicio con nombre $serviceName está registrado o no.
+- ServiceContainerInterface getServiceContainer(): Devuelve el contendor de servicios de la aplicación.
+- Application setServiceContainer(ServiceContainerInterface $serviceContainer): Permite setear un contenedor de servicios para la aplicación.
+ 
+Las aplicaciones de Leveret tienen un lugar destinado para el registro de servicios, ese lugar es el método **initServices()** de la clase de nuestra aplicación.
+    
+ 
+### Registro de instancias como servicios 
+
+__Ejemplo:__ Registro de una instancia de la clase *MyService* como un servicio de la aplicación.
+
+```
+        $app->registerService('ServiceName', new MyService());
+```
+
+ 
+### Registro de callables como servicios
+
+Ejemplo: Registro del servicio 'ServiceName'. Al asignar el valor true al tercer parámetro ($singleton) la primera vez que llame a $app->getService('ServiceName') se creará una instancia de *MyService* y se devoverá, en llamadas posteriores se devolverá la misma instancia de *MyService*, no se volverá a ejecutar el código del callable. 
+
+
+```
+        $app->registerService('ServiceName', function ()
+        {
+            $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
+            $myService = new MyService($configFile);
+
+            return $myService;
+        }, true);
+```
+
+Si quisiesemos que se creasen diferentes instancias de *MyService* cada vez que llamemos a $app->getService('ServiceName') bastaría con cambiar el valor del parámetro $singleton a false.
+
+__Ejemplo:__ Registro del servicio 'ServiceName'. Cada vez que se llama a $app->getService('ServiceName') se instancia un nuevo objeto de la clase *MyService* y se devuelve.
+ 
+```
+        $app->registerService('ServiceName', function ()
+        {
+            $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
+            $myService = new MyService($configFile);
+
+            return $myService;
+        }, false);
+```
+ 
+
+__NOTA:__ El registro de callables tiene una ventaja importante sobre el registro de instancias: el código de instanciación de objetos no se ejecuta si no se llama a $app->getService('ServiceName'), por lo tanto, registrar los servicios como callables puede representar un menor tiempo de "bootstraping" de la aplicación y un menor consumo de memoria, dado que sólo se crearán nuevas instancias cuando se haga uso de los servicios, y además la instanción se relalizará en tiempo de ejecución y no en el tiempo de carga de la aplicación.
+ 
+### Registro pares clave-valor como servicios
+ 
+ Leveret permite el registro de pares clave-valor como servicios del siguiente modo:
+ 
+```
+     $app->registerService('MyKey', 'MyValue');
+```
+ 
+ 
+###  Registro de recursos como servicios
+
+Al igual que en el resto de casos, para registrar un recurso (resource) como un servicio en nuestra aplicación, haremos uso del método **$app->registerService(** *string* **$serviceName,** *resource* **$resuorce)**
+
+```
+     $app->registerService('MyResource', $myResource);
+```
+
+
+
+## ACLs
+
+Leveret soporta el uso de ACL (access control lists) básicas. Con ellas podemos limitar el acceso a determinados componentes de nuestas aplicación en base a unas reglas que nosotros podemos definir (que deben cumplir con la interfaz *H4D\Leveret\Application\AclInterface*).
+
+El lugar destinado para el registro de ACLs es el método **initAcls()** de la clase de nuestra aplicación.
+
+Es posible registras ACLs para rutas y para controllers/actions, para ello se disponen los métodos:
+
+- registerAclForRoute(AclInterface $acl, string $routeName)
+- registerAclForController(AclInterface $acl, string $controllerName, array $applyToActions = ['*'], array $excludedActions = [])
+
+### Registro de ACLs para rutas
+
+Para registrar una o varias ACLs para una ruta determanada debemos emplear el método de la aplicación: **registerAclForRoute(AclInterface $acl, string $routeName)**, en donde:
+
+- $acl: Es una instancia de una clase que debe cumplir con la interfaz AclInterface.
+- $routeName: Es el nombre que le hemos asignado a la ruta sobre la que queremos aplicar la ACL.
+
+### Registro de ACLs para controllers
+
+Podemos registrar ACLs que se apliquen sobre un controller o determinados action de un controller empleando el siguiente método de nuestra aplicación: **registerAclForController(AclInterface $acl, string $controllerName, array $applyToActions = ['*'], array $excludedActions = [])**, en donde:
+
+- $acl: Es una instancia de una clase que debe cumplir con la interfaz AclInterface.
+- $controllerName: Es el nombre completo del controller (namespace + nombre de la clase).
+- $applyToActions: Es un array de strings en el que se puede especificar la lista de actions del controller sobre el que se va a aplicar la ACL. Por defecto el valor de este array es ['*'], indicando que la ACL se aplicará a todos los actions del controller.
+- $excludedActions: Es un array de strings en el que indicaremos sobre que actions no queremos que se aplique la ACL (viene a ser una whitelist de actions).
+  
+
+__Ejemplo:__ Aplicación de la ACL AdminLoggedInRequired (registrada como servicio) sobre el controller *MyAppp\Controller\AdminController*
+
+```
+$this->registerAclForController($this->getService(AdminLoggedInRequired::class),
+                                'MyAppp\Controller\AdminController');
+```
+
+
 ## Ejemplo completo:
 
 ```
