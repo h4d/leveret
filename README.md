@@ -1,6 +1,7 @@
 ## ¿Qué es Leveret?
 Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al estilo de slim, silex, etc).
 
+```
     $app = new Application();
     $app->registerRoute('GET', '/hello/:string')
         ->setAction(
@@ -9,43 +10,56 @@ Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al e
                 $app->getResponse()->setBody('Hello '.$name);
             });
     $app->run();
+```
 
 ## ¿Cómo se instala?
 
 Para instalar leveret vía composer debes añadir estos datos a tu fichero composer.json:
 
+```
     {
       "require": {
-        "h4d/leveret": "^1.0"
+        "h4d/leveret": "^1.3.3"
       },
       "repositories": [
-        {
-          "type": "vcs",
-          "url": "git@dev.edusalguero.com:h4d/leveret.git"
-        },
-        {
-          "type": "vcs",
-          "url": "git@dev.edusalguero.com:h4d/template.git"
-        }
-      ]
+          {
+            "type": "vcs",
+            "url": "http://miguel@dev.hosting4devs.com/h4d/leveret.git"
+          },
+          {
+            "type": "vcs",
+            "url": "http://miguel@dev.hosting4devs.com/h4d/template.git"
+          },
+          {
+            "type": "vcs",
+            "url": "http://miguel@dev.hosting4devs.com/h4d/i18n.git"
+          },
+          {
+            "type": "vcs",
+            "url": "http:///miguel@dev.hosting4devs.com/h4d/patterns.git"
+          }
+        ]
     }
+```
 
-__NOTA:__ Es necesario incluir todos los datos de los repositorios de las dependecias que están alojadas en repositorios privados. Como __h4d/leveret__ depende del paquete __h4d/template__ es necesario incluir también los datos de ese repositorio (composer no lo "resuelve" de forma automática como en el caso de los paquetes publicados en packagist).
+__NOTA:__ Es necesario incluir todos los datos de los repositorios de las dependecias que están alojadas en repositorios privados. Por ejemplo, como __h4d/leveret__ depende del paquete __h4d/template__ es necesario incluir también los datos de ese repositorio (composer no lo "resuelve" de forma automática como en el caso de los paquetes publicados en packagist).
 
 ## ¿Cómo se utiliza?
 
 ### Fichero de configuración
-Para que funcione la aplicación es necesario crear un fichero de configuración cuya ruta se pasará como parámetro al contructor de \H4D\Leveret\Application. Si no se pasa un fichero de configuración al constructor se instanciará una aplicación con valores de configuración por defecto.
+
+Para que funcione la aplicación es necesario crear un fichero de configuración cuya ruta se pasará como parámetro al constructor de \H4D\Leveret\Application. Si no se pasa un fichero de configuración al constructor se instanciará una aplicación con valores de configuración por defecto.
 
 En el siguiente cuadro se muestra el contenido del fichero de configuración por defecto. 
 
+```
     [application]
     ; Application name
     name = NoNamedApp
     ; Application environmnet: production, development.
     environment = production
     ; Application root directory.
-    path = ./
+    path = ../app
     ; Default content type for responses: text/html, application/json, etc.
     defaultContentType = text/html
     ; Error handler: internal Application static method name.
@@ -60,7 +74,7 @@ En el siguiente cuadro se muestra el contenido del fichero de configuración por
     
     [views]
     ; View templates directory
-    path = ./
+    path = ../app/views
     
     [routes]
     ; Example: Call appplication method
@@ -71,13 +85,16 @@ En el siguiente cuadro se muestra el contenido del fichero de configuración por
     ;status[pattern] = "/app/status"
     ;status[method] = "GET"
     ;status[callback] = "Your/Controller/ClassName::controllerMethod"
+```
         
 **NOTA:** Si las rutas indicadas en el fichero de configuración son relativas iran referidas al directorio raiz del servidor.
 
 ### Instanciación de un aplicación
 
+```
     /** @var \H4D\Leveret\Application $app */
     $app = new \H4D\Leveret\Application($configFilePath);
+```
 
 ### Registro de rutas
 
@@ -102,38 +119,46 @@ Ejemplos de "cadenas comodín":
  - **:(float)price**: Representa a una variable con nombre "price" de tipo "float".
  
 
-Ejemplo de una reprentaciones de rutas: 
+Ejemplo de reprentaciones de rutas: 
 
+```
     /add/:(float)num1/:(float)num2
     /hello/:name
+```
     
 A cada ruta se le debe asignar una acción mediante el método *setAction($clousure)*, del siguiente modo:    
 
+```
     // Action with multiple params.
     $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
         ->setAction(
             function ($num1, $num2) use ($app)
             {
                 $result = $num1 + $num2;
-                $app->getLogger()->notice(sprintf('Result: %f', $result), array('num1' => $num1,
-                                                                                'num2' => $num2,
-                                                                                'result' => $result));
+                $app->getLogger()->notice(sprintf('Result: %f', $result), ['num1' => $num1,
+                                                                           'num2' => $num2,
+                                                                           'result' => $result]);
                 $app->getResponse()->setBody($result));
             });
-            
-    En el caso de querer pasar otras variables a la clousue, o incluso la aplicación completa, lo podemos hacer mediante el uso de **use**:
+```            
+    
+
+En el caso de querer pasar otras variables a la clousue, o incluso la aplicación completa, lo podemos hacer mediante el uso de **use**:
 
 Un modo alternativo de asignar acciones a las rutas es mediante el uso de controllers. Se puede establecer la dupla controller/acción vía método *useController($controllerClassName, $controllerClassMethod)*, en donde el primer parámetro es el nombre de la clase del controller y el segundo es el nombre del método que queremos que sea ejecutado durante el dispatch.
 
 Esto es un ejemplo de asignación de una dupla controller/acción a una ruta.
 
+```
     $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')->useController('MathController', 'add');
+```
 
 Para cada ruta se pueden asociar múltiples acciones de predispatch y post dispatch de forma opcional. Para esto se dispone de los
-métodos *addPreDispatchAction($callable)* y *addPostDispatchAction($callable)*. A las los *"callable"* se le pasan por defecto como parámetros la ruta a la que están asociados y la aplicación, de este modo tendrán acceso a cualquier subcomponente de la aplicación (logger, request, response, etc).
+métodos *addPreDispatchAction($callable)* y *addPostDispatchAction($callable)*. A los *"callable"* se le pasan por defecto como parámetros la ruta a la que están asociados y la aplicación, de este modo tendrán acceso a cualquier subcomponente de la aplicación (logger, request, response, etc).
 
 En el siguiente ejemplo se añade una acción de predispatch que modifica los parámetros de la petición, poniendo en mayúsculas todos los parámetros de tipo string.
 
+```
     $app->registerRoute('GET', '/hello/:name')
         ->setAction(
             function ($name) use ($app)
@@ -152,6 +177,7 @@ En el siguiente ejemplo se añade una acción de predispatch que modifica los pa
                 }
                 $route->setParams($newParams);
             })
+```
 
 ### Registro de rutas en el fichero de configuración
 
@@ -159,7 +185,9 @@ Pueden registrarse rutas sencillas desde el fichero de configuración de la apli
 
 Para activar el registro de rutas definidas en el fichero de configuración es necesario que el valor de configuración _registerRoutesDefinedInConfigFile_ esté definido a _true_
 
+```
     registerRoutesDefinedInConfigFile = true
+```
     
 Las rutas se configuran en la sección _[routes]_ y pueden ser de dos tipos: 
 
@@ -168,19 +196,23 @@ Las rutas se configuran en la sección _[routes]_ y pueden ser de dos tipos:
 
 #### Definición de ruta que apunta a un Controller/Action:
 
+```
     [routes]
     ; Example: Define a route named "status" dispatched by a controller/action
     status[pattern] = "/example/route"
     status[method] = "GET"
     status[callback] = "Your/Controller/ClassName::controllerMethod"
+```
     
 #### Definición de ruta que apunta a un método de la clase de la aplicación:
 
+```
     [routes]
     ; Example: Define a route named "info" dispatched by an app's method
     info[pattern] = "/example/route"
     info[method] = "GET"
     info[callback] = "anAppMethod" ;; Method's name of your app class
+```    
 
 
 #### Validación de las peticiones
@@ -189,16 +221,19 @@ Cuando se registra una ruta en la aplicación se pueden añadir los validadores 
 
 En el siguiente ejemplo de añaden varias reglas de validación a los parámetros _username_ y _alias_. 
  
+```
      $this->registerRoute('POST', '/admin/deploy-request')
                   ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()])
                   ->addRequestConstraints('alias', [new Required(), new NotBlank(),
                                                     new Length(array('min'=>3, 'max'=>100))])
                   ->useController('AdminController', 'deployRequest');
+```
 
 Las reglas de validación deben ser instancias de clases que cumplan con la interfaz __H4D\Leveret\Validation\ConstraintInterface__. En el caso de necesitar reglas de validación que no cumplan con esa interfaz siempre se puede hacer un adaptador, como por ejemplo  __H4D\Leveret\Validation\Adapters\H4DConstraintAdapter__ que permite utilizar las reglas de validación definidas en el proyecto __h4d/validator__.
 
 En el siguiente ejemplo se muestra el uso de una regla de validación de H4D mediante el uso del adaptador creado para tal efecto:
 
+```
     $app = new Application();
     $app->registerRoute('GET', '/hello/:(string)name')
         ->addRequestConstraints('name', new H4DConstraintAdapter((new Enum())->setOptions(['paco', 'maria'])))
@@ -213,6 +248,7 @@ En el siguiente ejemplo se muestra el uso de una regla de validación de H4D med
                 $app->getResponse()->setBody('Hello '.$name);
             });
     $app->run();
+```
 
  
 Desde el objeto __Application__ de Leveret se puede obtener información de los resultados de la validación de una petición mediante los siguientes métodos:
@@ -233,9 +269,11 @@ Para definir qué parámetros de una ruta determinada son requeridos se dispone 
  
 Ejemplo de uso:
 
+```
     $this->registerRoute('POST', '/admin/deploy-request')
         ->setRequiredParam('username')
         ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()]);
+```
 
 
 ### Autovalidación de peticiones
@@ -250,14 +288,18 @@ Los tres modos se pueden configurar mediante el método __setAutoRequestValidati
 
 Para cada uno de los modos existen constantes definidas en la clase Application.
 
+```
     const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
     const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
     const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
+```
 
 Ejemplo de uso:
-   
-        $app = new Application(APP_CONFIG_DIR.'/config.ini');
-        $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
+
+```
+    $app = new Application(APP_CONFIG_DIR.'/config.ini');
+    $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
+```
 
 
 ### Filtrado de parámetros POST|PUT|PATH|DELETE, parámetros de query y URL
@@ -272,15 +314,19 @@ Es posbile aplicar filtros específicos a los parámetros emplemando el método 
 
 Ejemplo:
 
+```
     $this->registerRoute('POST', '/create/alias')
             ->addRequestFilters('alias', [new Filter1(), new Filter2(), 
                                          function($alias){return strtolower($alias)}]);
+```
 
 ### Ejecución de la aplicación
          
 El método *run()* es el que se encarga de enrutar las peticiones y proporcionar una respuesta HTTP al cliente.
 
+```
     $app->run();
+```    
     
 ## Controllers
 
@@ -290,6 +336,7 @@ Desde cualquier método de un controller se puede acceder a la aplicación media
 
 Ejemplo de un controller básico:
 
+```
     use H4D\Leveret\Application;
     use H4D\Leveret\Application\Controller;
     use H4D\Leveret\Http\Response\Headers;
@@ -327,6 +374,7 @@ Ejemplo de un controller básico:
             $this->getResponse()->setBody(phpinfo());
         }
     }
+```
 
 ### Método *init()*
 
@@ -367,12 +415,15 @@ Cuando necesitemos utilizar una plantilla podremos hacer uso de la vista por def
 
 Para especificar la plantilla que queremos renderizar se empleará el método *render($template)* del objeto aplicación. El único parámetro que admite es la ruta relativa del fichero de la plantilla con respecto a la ruta base de las vistas (definida en el fichero de configuración de la aplicación en la sección views/path)
 
+```
     $app->render('add.phtml');
+```
 
 Las plantillas serán normalmente ficheros phtml (aunque podrían ser cualquier otra cosa).
 
 Ejemplo de una plantilla:
 
+```
     <html>
     <head>
         <title><?php echo $title?></title>
@@ -383,14 +434,17 @@ Ejemplo de una plantilla:
     </div>
     </body>
     </html>
+```
     
 ## Vistas parciales
 
 Se pueden emplear vistas parciales dentro de otras vistas del siguiente modo:
 
+```
     <div>
         <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
     </div>
+```
 
 Las vistas parciales "heredan" todos los métodos y variables de las vistas contenedoras. 
 
@@ -398,23 +452,29 @@ Está permitido el uso de vistas parciales en el interior de vistas parciales. P
 
 En la vista principal:
 
+```
     <div>
         <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
     </div>
+```
     
 En APP_VIEWS_DIR.'/partials/test/partial.phtml':
 
+```
     <h1>Partial</h1>
     <p>
         <?php echo $this->translate('Hola %s! Esto es un partial.', $nombre);?>
     </p>
     
     <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/internal.phtml');?>
+```
 
 En APP_VIEWS_DIR.'/partials/test/internal.phtml'
 
+```
     <h2>Partial interno</h2>
     <?php echo $this->translate('Hola %s! Soy un partial dentro de otro partial', $nombre);?>
+```
 
 ### ¿Cómo se resuelven los nombres de variables dentro de los partials?
 
@@ -431,29 +491,38 @@ Los layouts son vistas que se pueden emplear como un contenedor de otras vistas.
 
 Para hacer uso de un layout determinado se debe emplear el método de la aplicación **useLayout($template)**, en donde *$template* es la ruta relativa del fichero de la plantilla del layout con respecto a la ruta base de las vistas de la aplicación.
 
+```
     $app->useLayout('layouts/main.phtml');
     $app->render('add.phtml');
+```
 
 ## Eventos
 
 Tanto la aplicación como los controllers de Leveret implementan el patrón _publisher_, por lo que pueden publicar eventos mediante el método _publish(Event $event)_.
 
+```
     $app->publish($myEvent);
+```
 
 A los eventos de la aplicación pueden subscribirser tantos _listereners/observers/subscribers_ como sea necesario, para ello se utiliza el método _attachSubscriber(SubscriberInterface $subscriber)_. 
 
+```
     $app->attachSubscriber($mySubscriberOne);
     $app->attachSubscriber($mySubscriberTwo);
+```
 
 Si se quiere retirar un listener se usaría el método _dettachSubscriber(SubscriberInterface $subscriber)_.
 
+```
     $app->dettachSubscriber($mySubscriberTwo);
+```
 
 Los controllers disponen de los mismos métodos para agregar o retirar listeners. Todos los eventos que se publiquen desde un controller se propagan a la aplicación.
 
 
 ## Ejemplo completo:
 
+```
     <?php
     
     use H4D\Leveret\Application;
@@ -551,3 +620,4 @@ Los controllers disponen de los mismos métodos para agregar o retirar listeners
     
     // Run the application!
     $app->run();
+```
