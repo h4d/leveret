@@ -51,7 +51,6 @@ class ServiceContainer implements ServiceContainerInterface
      * @param string $serviceName
      * @param null|bool|int|float|string|array $value
      *
-     * @return $this
      * @throws ServiceContainerException
      */
     public function registerValue($serviceName, $value)
