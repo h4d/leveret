@@ -530,7 +530,7 @@ Tanto la aplicación como los controllers de Leveret implementan el patrón _pub
     $app->publish($myEvent);
 ```
 
-A los eventos de la aplicación pueden subscribirser tantos _listereners/observers/subscribers_ como sea necesario, para ello se utiliza el método _attachSubscriber(SubscriberInterface $subscriber)_. 
+A los eventos de la aplicación pueden subscribirse tantos _listereners/observers/subscribers_ como sea necesario, para ello se utiliza el método _attachSubscriber(SubscriberInterface $subscriber)_. 
 
 ```
     $app->attachSubscriber($mySubscriberOne);
