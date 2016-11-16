@@ -7,7 +7,7 @@
     "fast",
     "API"
   ],
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "Miguel Ángel Graña",
