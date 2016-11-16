@@ -227,10 +227,10 @@ En el siguiente ejemplo de añaden varias reglas de validación a los parámetro
  
 ```
      $this->registerRoute('POST', '/admin/deploy-request')
-                  ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()])
-                  ->addRequestConstraints('alias', [new Required(), new NotBlank(),
-                                                    new Length(array('min'=>3, 'max'=>100))])
-                  ->useController('AdminController', 'deployRequest');
+          ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()])
+          ->addRequestConstraints('alias', [new Required(), new NotBlank(),
+                                            new Length(array('min'=>3, 'max'=>100))])
+          ->useController('AdminController', 'deployRequest');
 ```
 
 Las reglas de validación deben ser instancias de clases que cumplan con la interfaz __H4D\Leveret\Validation\ConstraintInterface__. En el caso de necesitar reglas de validación que no cumplan con esa interfaz siempre se puede hacer un adaptador, como por ejemplo  __H4D\Leveret\Validation\Adapters\H4DConstraintAdapter__ que permite utilizar las reglas de validación definidas en el proyecto __h4d/validator__.
