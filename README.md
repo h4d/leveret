@@ -555,21 +555,21 @@ Leveret incluye un contenedor de servicios muy simple que soporta los siguientes
  - KeyValue
  - Resources
  
-Para registrar un servicio en la aplicación puede usarse el  el método **registerService(string $serviceName, mixed $value, $singleton = false)** del objeto aplicación. En donde:
+Para registrar un servicio en la aplicación puede usarse el  el método **registerService(** _string_ **$serviceName,** _mixed_ **$value, $singleton = false)** del objeto aplicación. En donde:
 
-- $serviceName: Es un string con el nombre que queremos asignar al servicio.
-- $value: Es el servicio en sí, y puede ser: un callable, una instancia, un resource o un par clave-valor.
-- $singleton: Sólo debe emplearse si $value es un callable y hace que la función callable se ejecute una sola vez, devolviéndose el mismo valor de retorno en llamadas posteriores.
+- _$serviceName_: Es un string con el nombre que queremos asignar al servicio.
+- _$value_: Es el servicio en sí, y puede ser: un callable, una instancia, un resource o un par clave-valor.
+- _$singleton_: Sólo debe emplearse si _$value_ es un callable y hace que la función callable se ejecute una sola vez, devolviéndose el mismo valor de retorno en llamadas posteriores.
 
-Para recuperar los servicios registrados el objeto aplicación dispone del método **getService(string $serviceName)** en donde:
+Para recuperar los servicios registrados el objeto aplicación dispone del método **getService(** _string_ **$serviceName)** en donde:
 
-- $serviceName: Es el nombre del servicio que hemos registrado previamente.
+- _$serviceName_: Es el nombre del servicio que hemos registrado previamente.
 
 Otros métodos útiles en relación con los servicios son:
 
-- bool isServiceRegistered(string $serviceName): Devuelve true o false si el servicio con nombre $serviceName está registrado o no.
-- ServiceContainerInterface getServiceContainer(): Devuelve el contendor de servicios de la aplicación.
-- Application setServiceContainer(ServiceContainerInterface $serviceContainer): Permite setear un contenedor de servicios para la aplicación.
+- _bool_ **isServiceRegistered(**_string_ **$serviceName)**: Devuelve true o false si el servicio con nombre $serviceName está registrado o no.
+- _ServiceContainerInterface_ **getServiceContainer()**: Devuelve el contendor de servicios de la aplicación.
+- _Application_ **setServiceContainer(**_ServiceContainerInterface_ **$serviceContainer)**: Permite setear un contenedor de servicios para la aplicación.
  
 Las aplicaciones de Leveret tienen un lugar destinado para el registro de servicios, ese lugar es el método **initServices()** de la clase de nuestra aplicación.
     
@@ -585,7 +585,7 @@ __Ejemplo:__ Registro de una instancia de la clase *MyService* como un servicio 
  
 ### Registro de callables como servicios
 
-Ejemplo: Registro del servicio 'ServiceName'. Al asignar el valor true al tercer parámetro ($singleton) la primera vez que llame a $app->getService('ServiceName') se creará una instancia de *MyService* y se devoverá, en llamadas posteriores se devolverá la misma instancia de *MyService*, no se volverá a ejecutar el código del callable. 
+Ejemplo: Registro del servicio _'ServiceName'_. Al asignar el valor true al tercer parámetro (_$singleton_) la primera vez que llame a **$app->getService(**_'ServiceName'_**)** se creará una instancia de *MyService* y se devoverá. En llamadas posteriores se devolverá la misma instancia de *MyService*, no se volverá a ejecutar el código del callable. 
 
 
 ```
@@ -598,9 +598,9 @@ Ejemplo: Registro del servicio 'ServiceName'. Al asignar el valor true al tercer
         }, true);
 ```
 
-Si quisiesemos que se creasen diferentes instancias de *MyService* cada vez que llamemos a $app->getService('ServiceName') bastaría con cambiar el valor del parámetro $singleton a false.
+Si quisiesemos que se creasen diferentes instancias de *MyService* cada vez que llamemos a **$app->getService(**_'ServiceName'_**)** bastaría con cambiar el valor del parámetro $singleton a false.
 
-__Ejemplo:__ Registro del servicio 'ServiceName'. Cada vez que se llama a $app->getService('ServiceName') se instancia un nuevo objeto de la clase *MyService* y se devuelve.
+__Ejemplo:__ Registro del servicio _'ServiceName'_. Cada vez que se llama a **$app->getService(**_'ServiceName'_**)** se instancia un nuevo objeto de la clase *MyService* y se devuelve.
  
 ```
         $app->registerService('ServiceName', function ()
@@ -613,7 +613,7 @@ __Ejemplo:__ Registro del servicio 'ServiceName'. Cada vez que se llama a $app->
 ```
  
 
-__NOTA:__ El registro de callables tiene una ventaja importante sobre el registro de instancias: el código de instanciación de objetos no se ejecuta si no se llama a $app->getService('ServiceName'), por lo tanto, registrar los servicios como callables puede representar un menor tiempo de "bootstraping" de la aplicación y un menor consumo de memoria, dado que sólo se crearán nuevas instancias cuando se haga uso de los servicios, y además la instanción se relalizará en tiempo de ejecución y no en el tiempo de carga de la aplicación.
+__NOTA:__ El registro de callables tiene una ventaja importante sobre el registro de instancias: el código de instanciación de objetos no se ejecuta si no se llama a **$app->getService(**_'ServiceName'_**)**, por lo tanto, registrar los servicios como callables puede representar un menor tiempo de "bootstraping" de la aplicación y un menor consumo de memoria, dado que sólo se crearán nuevas instancias cuando se haga uso de los servicios, y además la instanción se relalizará en tiempo de ejecución y no en el tiempo de carga de la aplicación.
  
 ### Registro pares clave-valor como servicios
  
