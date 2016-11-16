@@ -24,19 +24,23 @@ Para instalar leveret vía composer debes añadir estos datos a tu fichero compo
       "repositories": [
           {
             "type": "vcs",
-            "url": "http://miguel@dev.hosting4devs.com/h4d/leveret.git"
+            "url": "git@dev.hosting4devs.com:h4d/leveret.git"
           },
           {
             "type": "vcs",
-            "url": "http://miguel@dev.hosting4devs.com/h4d/template.git"
+            "url": "git@dev.hosting4devs.com:h4d/template.git"
           },
           {
             "type": "vcs",
-            "url": "http://miguel@dev.hosting4devs.com/h4d/i18n.git"
+            "url": "git@dev.hosting4devs.com:h4d/validator.git"
           },
           {
             "type": "vcs",
-            "url": "http:///miguel@dev.hosting4devs.com/h4d/patterns.git"
+            "url": "git@dev.hosting4devs.com:h4d/i18n.git"
+          },
+          {
+            "type": "vcs",
+            "url": "git@dev.hosting4devs.com:h4d/patterns.git"
           }
         ]
     }
