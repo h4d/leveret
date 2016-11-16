@@ -221,7 +221,7 @@ Las rutas se configuran en la sección _[routes]_ y pueden ser de dos tipos:
 
 #### Validación de las peticiones
 
-Cuando se registra una ruta en la aplicación se pueden añadir los validadores necesarios para cada uno de los parámetros que se espera recibir. El método disonible para tal efecto es __addRequestConstraints($paramName, [Constraints])__, que acepta como primer parámetro un string que identifica el nombre del parámetro a validar y como segundo parámetro una regla (_Constraint_) o conjunto de reglas (array de _Constraints_) que el parámetro debe cumplir.
+Cuando se registra una ruta en la aplicación se pueden añadir los validadores necesarios para cada uno de los parámetros que se espera recibir. El método disponible para tal efecto es __addRequestConstraints($paramName, [Constraints])__, que acepta como primer parámetro un string que identifica el nombre del parámetro a validar y como segundo parámetro una regla (_Constraint_) o conjunto de reglas (array de _Constraints_) que el parámetro debe cumplir.
 
 En el siguiente ejemplo de añaden varias reglas de validación a los parámetros _username_ y _alias_. 
  
