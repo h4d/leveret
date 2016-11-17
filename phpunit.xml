@@ -1,0 +1,28 @@
+<phpunit bootstrap="./vendor/autoload.php" colors="true">
+
+    <testsuites>
+        <!-- Default test suite to run all tests -->
+        <testsuite name="AllTests">
+            <directory suffix=".php">./tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="./tmp/report"/>
+        <log type="coverage-clover" target="./tmp/coverage.xml"/>
+        <log type="coverage-php" target="./tmp/coverage.serialized"/>
+        <log type="coverage-text" target="php://stdout"/>
+        <log type="json" target="./tmp/logfile.json"/>
+        <log type="tap" target="./tmp/logfile.tap"/>
+        <log type="junit" target="./tmp/logfile.xml" logIncompleteSkipped="false"/>
+        <log type="testdox-html" target="./tmp/testdox.html"/>
+        <log type="testdox-text" target="./tmp/testdox.txt"/>
+    </logging>
+
+</phpunit>
