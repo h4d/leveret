@@ -1,4 +1,5 @@
 ## ¿Qué es Leveret?
+
 Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al estilo de slim, silex, etc).
 
 ```
@@ -14,36 +15,10 @@ Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al e
 
 ## ¿Cómo se instala?
 
-Para instalar leveret vía composer debes añadir estos datos a tu fichero composer.json:
+Para instalar leveret vía composer debes ejecutar:
 
 ```
-    {
-      "require": {
-        "h4d/leveret": "^1.3.3"
-      },
-      "repositories": [
-          {
-            "type": "vcs",
-            "url": "git@dev.hosting4devs.com:h4d/leveret.git"
-          },
-          {
-            "type": "vcs",
-            "url": "git@dev.hosting4devs.com:h4d/template.git"
-          },
-          {
-            "type": "vcs",
-            "url": "git@dev.hosting4devs.com:h4d/validator.git"
-          },
-          {
-            "type": "vcs",
-            "url": "git@dev.hosting4devs.com:h4d/i18n.git"
-          },
-          {
-            "type": "vcs",
-            "url": "git@dev.hosting4devs.com:h4d/patterns.git"
-          }
-        ]
-    }
+    $ composer require h4d/leveret
 ```
 
 __NOTA:__ Es necesario incluir todos los datos de los repositorios de las dependecias que están alojadas en repositorios privados. Por ejemplo, como __h4d/leveret__ depende del paquete __h4d/template__ es necesario incluir también los datos de ese repositorio (composer no lo "resuelve" de forma automática como en el caso de los paquetes publicados en packagist).
