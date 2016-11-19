@@ -23,28 +23,9 @@
     "retrinko/ini": "^1.0"
   },
   "require-dev": {
-    "h4d/validator": "^1.0",
-    "symfony/validator": "~2.3",
     "phpunit/phpunit":  "^4.8"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@dev.hosting4devs.com:h4d/template.git"
-    },
-    {
-      "type": "vcs",
-      "url": "git@dev.hosting4devs.com:h4d/validator.git"
-    },
-    {
-      "type": "vcs",
-      "url": "git@dev.hosting4devs.com:h4d/i18n.git"
-    },
-    {
-      "type": "vcs",
-      "url": "git@dev.hosting4devs.com:h4d/patterns.git"
-    }
-  ],
+  "repositories": [],
   "autoload": {
     "psr-4": {"H4D\\Leveret\\": "src"}
   }
