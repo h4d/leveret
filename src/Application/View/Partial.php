@@ -57,7 +57,16 @@ class Partial extends Template
      */
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->getView(), $name], $arguments);
+        return $this->getView()->__call($name, $arguments);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return Helpers\AbstractHelper
+     */
+    public function __get($name)
+    {
+        return $this->getView()->__get($name);
+    }
 }
