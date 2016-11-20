@@ -3,14 +3,14 @@
 Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al estilo de slim, silex, etc).
 
 ```
-    $app = new Application();
-    $app->registerRoute('GET', '/hello/:string')
-        ->setAction(
-            function ($name) use ($app)
-            {
-                $app->getResponse()->setBody('Hello '.$name);
-            });
-    $app->run();
+$app = new Application();
+$app->registerRoute('GET', '/hello/:string')
+    ->setAction(
+        function ($name) use ($app)
+        {
+            $app->getResponse()->setBody('Hello '.$name);
+        });
+$app->run();
 ```
 
 ## ¿Cómo se instala?
@@ -18,7 +18,7 @@ Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al e
 Para instalar leveret vía composer debes ejecutar:
 
 ```
-    $ composer require h4d/leveret
+$ composer require h4d/leveret
 ```
 
 __NOTA:__ Es necesario incluir todos los datos de los repositorios de las dependecias que están alojadas en repositorios privados. Por ejemplo, como __h4d/leveret__ depende del paquete __h4d/template__ es necesario incluir también los datos de ese repositorio (composer no lo "resuelve" de forma automática como en el caso de los paquetes publicados en packagist).
@@ -32,38 +32,38 @@ Para que funcione la aplicación es necesario crear un fichero de configuración
 En el siguiente cuadro se muestra el contenido del fichero de configuración por defecto. 
 
 ```
-    [application]
-    ; Application name
-    name = NoNamedApp
-    ; Application environmnet: production, development.
-    environment = production
-    ; Application root directory.
-    path = ../app
-    ; Default content type for responses: text/html, application/json, etc.
-    defaultContentType = text/html
-    ; Error handler: internal Application static method name.
-    errorHandler = errorHandler
-    ; Default input filter type (@see http://php.net/manual/en/filter.filters.sanitize.php)
-    ; 516: FILTER_UNSAFE_RAW
-    ; 522: FILTER_SANITIZE_FULL_SPECIAL_CHARS
-    ; 513: FILTER_SANITIZE_STRING
-    defaultInputFilterType = 516
-    ; Register routes defined in [routes] section (values: true|false).
-    registerRoutesDefinedInConfigFile = true
+[application]
+; Application name
+name = NoNamedApp
+; Application environmnet: production, development.
+environment = production
+; Application root directory.
+path = ../app
+; Default content type for responses: text/html, application/json, etc.
+defaultContentType = text/html
+; Error handler: internal Application static method name.
+errorHandler = errorHandler
+; Default input filter type (@see http://php.net/manual/en/filter.filters.sanitize.php)
+; 516: FILTER_UNSAFE_RAW
+; 522: FILTER_SANITIZE_FULL_SPECIAL_CHARS
+; 513: FILTER_SANITIZE_STRING
+defaultInputFilterType = 516
+; Register routes defined in [routes] section (values: true|false).
+registerRoutesDefinedInConfigFile = true
     
-    [views]
-    ; View templates directory
-    path = ../app/views
+[views]
+; View templates directory
+path = ../app/views
     
-    [routes]
-    ; Example: Call appplication method
-    appInfo[pattern] = "/app/info"
-    appInfo[method] = "GET"
-    appInfo[callback] = "renderAppInfo"
-    ; Example: Call controller/action
-    ;status[pattern] = "/app/status"
-    ;status[method] = "GET"
-    ;status[callback] = "Your/Controller/ClassName::controllerMethod"
+[routes]
+; Example: Call appplication method
+appInfo[pattern] = "/app/info"
+appInfo[method] = "GET"
+appInfo[callback] = "renderAppInfo"
+; Example: Call controller/action
+;status[pattern] = "/app/status"
+;status[method] = "GET"
+;status[callback] = "Your/Controller/ClassName::controllerMethod"
 ```
         
 **NOTA:** Si las rutas indicadas en el fichero de configuración son relativas iran referidas al directorio raiz del servidor.
@@ -71,8 +71,8 @@ En el siguiente cuadro se muestra el contenido del fichero de configuración por
 ### Instanciación de un aplicación
 
 ```
-    /** @var \H4D\Leveret\Application $app */
-    $app = new \H4D\Leveret\Application($configFilePath);
+/** @var \H4D\Leveret\Application $app */
+$app = new \H4D\Leveret\Application($configFilePath);
 ```
 
 ### Registro de rutas
@@ -101,24 +101,24 @@ Ejemplos de "cadenas comodín":
 Ejemplo de reprentaciones de rutas: 
 
 ```
-    /add/:(float)num1/:(float)num2
-    /hello/:name
+/add/:(float)num1/:(float)num2
+/hello/:name
 ```
     
 A cada ruta se le debe asignar una acción mediante el método *setAction($clousure)*, del siguiente modo:    
 
 ```
-    // Action with multiple params.
-    $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
-        ->setAction(
-            function ($num1, $num2) use ($app)
-            {
-                $result = $num1 + $num2;
-                $app->getLogger()->notice(sprintf('Result: %f', $result), ['num1' => $num1,
-                                                                           'num2' => $num2,
-                                                                           'result' => $result]);
-                $app->getResponse()->setBody($result));
-            });
+// Action with multiple params.
+$app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
+    ->setAction(
+        function ($num1, $num2) use ($app)
+        {
+            $result = $num1 + $num2;
+            $app->getLogger()->notice(sprintf('Result: %f', $result), ['num1' => $num1,
+                                                                       'num2' => $num2,
+                                                                       'result' => $result]);
+            $app->getResponse()->setBody($result));
+        });
 ```            
     
 
@@ -129,7 +129,7 @@ Un modo alternativo de asignar acciones a las rutas es mediante el uso de contro
 Esto es un ejemplo de asignación de una dupla controller/acción a una ruta.
 
 ```
-    $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')->useController('MathController', 'add');
+$app->registerRoute('GET', '/add/:(float)num1/:(float)num2')->useController('MathController', 'add');
 ```
 
 Para cada ruta se pueden asociar múltiples acciones de predispatch y post dispatch de forma opcional. Para esto se dispone de los
@@ -138,24 +138,24 @@ métodos *addPreDispatchAction($callable)* y *addPostDispatchAction($callable)*.
 En el siguiente ejemplo se añade una acción de predispatch que modifica los parámetros de la petición, poniendo en mayúsculas todos los parámetros de tipo string.
 
 ```
-    $app->registerRoute('GET', '/hello/:name')
-        ->setAction(
-            function ($name) use ($app)
+$app->registerRoute('GET', '/hello/:name')
+    ->setAction(
+        function ($name) use ($app)
+        {
+            $app->getView()->addVar('name', $name);
+            $app->render('hello.phtml');
+        })
+    ->addPreDispatchAction(
+        function ($route, $app)
+        {
+            $newParams = array();
+            /** @var \H4D\Leveret\Application\Route $route */
+            foreach($route->getParams() as $key => $value)
             {
-                $app->getView()->addVar('name', $name);
-                $app->render('hello.phtml');
-            })
-        ->addPreDispatchAction(
-            function ($route, $app)
-            {
-                $newParams = array();
-                /** @var \H4D\Leveret\Application\Route $route */
-                foreach($route->getParams() as $key => $value)
-                {
-                    $newParams[$key] = is_string($value) ? strtoupper($value) : $value;
-                }
-                $route->setParams($newParams);
-            })
+                $newParams[$key] = is_string($value) ? strtoupper($value) : $value;
+            }
+            $route->setParams($newParams);
+        })
 ```
 
 ### Registro de rutas en el fichero de configuración
@@ -165,7 +165,7 @@ Pueden registrarse rutas sencillas desde el fichero de configuración de la apli
 Para activar el registro de rutas definidas en el fichero de configuración es necesario que el valor de configuración _registerRoutesDefinedInConfigFile_ esté definido a _true_
 
 ```
-    registerRoutesDefinedInConfigFile = true
+registerRoutesDefinedInConfigFile = true
 ```
     
 Las rutas se configuran en la sección _[routes]_ y pueden ser de dos tipos: 
@@ -176,21 +176,21 @@ Las rutas se configuran en la sección _[routes]_ y pueden ser de dos tipos:
 #### Definición de ruta que apunta a un Controller/Action:
 
 ```
-    [routes]
-    ; Example: Define a route named "status" dispatched by a controller/action
-    status[pattern] = "/example/route"
-    status[method] = "GET"
-    status[callback] = "Your/Controller/ClassName::controllerMethod"
+[routes]
+; Example: Define a route named "status" dispatched by a controller/action
+status[pattern] = "/example/route"
+status[method] = "GET"
+status[callback] = "Your/Controller/ClassName::controllerMethod"
 ```
     
 #### Definición de ruta que apunta a un método de la clase de la aplicación:
 
 ```
-    [routes]
-    ; Example: Define a route named "info" dispatched by an app's method
-    info[pattern] = "/example/route"
-    info[method] = "GET"
-    info[callback] = "anAppMethod" ;; Method's name of your app class
+[routes]
+; Example: Define a route named "info" dispatched by an app's method
+info[pattern] = "/example/route"
+info[method] = "GET"
+info[callback] = "anAppMethod" ;; Method's name of your app class
 ```    
 
 
@@ -201,11 +201,11 @@ Cuando se registra una ruta en la aplicación se pueden añadir los validadores 
 En el siguiente ejemplo de añaden varias reglas de validación a los parámetros _username_ y _alias_. 
  
 ```
-     $this->registerRoute('POST', '/admin/deploy-request')
-          ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()])
-          ->addRequestConstraints('alias', [new Required(), new NotBlank(),
-                                            new Length(array('min'=>3, 'max'=>100))])
-          ->useController('AdminController', 'deployRequest');
+ $this->registerRoute('POST', '/admin/deploy-request')
+      ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()])
+      ->addRequestConstraints('alias', [new Required(), new NotBlank(),
+                                        new Length(array('min'=>3, 'max'=>100))])
+      ->useController('AdminController', 'deployRequest');
 ```
 
 Las reglas de validación deben ser instancias de clases que cumplan con la interfaz __H4D\Leveret\Validation\ConstraintInterface__. En el caso de necesitar reglas de validación que no cumplan con esa interfaz siempre se puede hacer un adaptador, como por ejemplo  __H4D\Leveret\Validation\Adapters\H4DConstraintAdapter__ que permite utilizar las reglas de validación definidas en el proyecto __h4d/validator__ o __H4D\Leveret\Validation\Adapters\SymfonyConstraintAdapter__ que permite utilizar las reglas de validación del proyecto [Symfony](https://symfony.com/doc/current/reference/constraints.html) .
@@ -213,41 +213,41 @@ Las reglas de validación deben ser instancias de clases que cumplan con la inte
 En el siguiente ejemplo se muestra el uso de una regla de validación de H4D mediante el uso del adaptador creado para tal efecto:
 
 ```
-    $app = new Application();
-    $app->registerRoute('GET', '/hello/:(string)name')
-        ->addRequestConstraints('name', new H4DConstraintAdapter((new Enum())->setOptions(['paco', 'maria'])))
-        ->setAction(
-            function ($name) use ($app)
+$app = new Application();
+$app->registerRoute('GET', '/hello/:(string)name')
+    ->addRequestConstraints('name', new H4DConstraintAdapter((new Enum())->setOptions(['paco', 'maria'])))
+    ->setAction(
+        function ($name) use ($app)
+        {
+            $isValid = $app->isValidRequest();
+            if (!$isValid)
             {
-                $isValid = $app->isValidRequest();
-                if (!$isValid)
-                {
-                    throw new \Exception($app->getRequestConstraintsViolationMessagesAsString());
-                }
-                $app->getResponse()->setBody('Hello '.$name);
-            });
-    $app->run();
+                throw new \Exception($app->getRequestConstraintsViolationMessagesAsString());
+            }
+            $app->getResponse()->setBody('Hello '.$name);
+        });
+$app->run();
 ```
 
 En el siguiente ejemplo se muestra el uso de reglas de validación de Symfony:
 
 ```
-    $app = new Application();
-    $app->registerRoute('GET', '/hello/:(string)name')
-        ->setRequiredParam('name')
-        ->addRequestConstraints('name', [new SymfonyConstraintAdapter(new Required()),
-                                         new SymfonyConstraintAdapter(new NotBlank())])
-        ->setAction(
-            function ($name) use ($app)
+$app = new Application();
+$app->registerRoute('GET', '/hello/:(string)name')
+    ->setRequiredParam('name')
+    ->addRequestConstraints('name', [new SymfonyConstraintAdapter(new Required()),
+                                     new SymfonyConstraintAdapter(new NotBlank())])
+    ->setAction(
+        function ($name) use ($app)
+        {
+            $isValid = $app->isValidRequest();
+            if (!$isValid)
             {
-                $isValid = $app->isValidRequest();
-                if (!$isValid)
-                {
-                    throw new \Exception($app->getRequestConstraintsViolationMessagesAsString());
-                }
-                $app->getResponse()->setBody('Hello '.$name);
-            });
-    $app->run();
+                throw new \Exception($app->getRequestConstraintsViolationMessagesAsString());
+            }
+            $app->getResponse()->setBody('Hello '.$name);
+        });
+$app->run();
 ```
 
  
@@ -271,9 +271,9 @@ Para definir qué parámetros de una ruta determinada son requeridos se dispone 
 Ejemplo de uso:
 
 ```
-    $this->registerRoute('POST', '/admin/deploy-request')
-        ->setRequiredParam('username')
-        ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()]);
+$this->registerRoute('POST', '/admin/deploy-request')
+    ->setRequiredParam('username')
+    ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()]);
 ```
 
 
@@ -290,16 +290,16 @@ Los tres modos se pueden configurar mediante el método __setAutoRequestValidati
 Para cada uno de los modos existen constantes definidas en la clase Application.
 
 ```
-    const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
-    const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
-    const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
+const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
+const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
+const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
 ```
 
 Ejemplo de uso:
 
 ```
-    $app = new Application(APP_CONFIG_DIR.'/config.ini');
-    $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
+$app = new Application(APP_CONFIG_DIR.'/config.ini');
+$app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
 ```
 
 
@@ -316,9 +316,9 @@ Es posbile aplicar filtros específicos a los parámetros emplemando el método 
 Ejemplo:
 
 ```
-    $this->registerRoute('POST', '/create/alias')
-            ->addRequestFilters('alias', [new Filter1(), new Filter2(), 
-                                         function($alias){return strtolower($alias)}]);
+$this->registerRoute('POST', '/create/alias')
+        ->addRequestFilters('alias', [new Filter1(), new Filter2(), 
+                                     function($alias){return strtolower($alias)}]);
 ```
 
 ### Ejecución de la aplicación
@@ -326,7 +326,7 @@ Ejemplo:
 El método *run()* es el que se encarga de enrutar las peticiones y proporcionar una respuesta HTTP al cliente.
 
 ```
-    $app->run();
+$app->run();
 ```    
     
 ## Controllers
@@ -338,43 +338,43 @@ Desde cualquier método de un controller se puede acceder a la aplicación media
 Ejemplo de un controller básico:
 
 ```
-    use H4D\Leveret\Application;
-    use H4D\Leveret\Application\Controller;
-    use H4D\Leveret\Http\Response\Headers;
+use H4D\Leveret\Application;
+use H4D\Leveret\Application\Controller;
+use H4D\Leveret\Http\Response\Headers;
     
-    class MathController extends Controller
+class MathController extends Controller
+{
+   /**
+    * Sobreescribo método init
+    */
+    public function init()
     {
-       /**
-        * Sobreescribo método init
-        */
-        public function init()
-        {
-            // Especifico el layout que se utilizará para todas las acciones de este controller
-            $this->useLayout('layouts/main.phtml');
-        }
-        
-        /**
-         * @param float $a
-         * @param float $b
-         */
-        public function add($a, $b)
-        {
-            // Obtengo la vista y paso las variables necesarias.
-            $this->getView()
-                ->addVar('title', sprintf('%s + %s', $a, $b))
-                ->addVar('num1', $a)
-                ->addVar('num2', $b)
-                ->addVar('result', $a+$b);
-            // Especifico la pantilla que se va a emplear.    
-            $this->render('add.phtml');
-        }
-    
-        public function info()
-        {
-            // No uso vista, seteo directamente el cuerpo de la respuesta.
-            $this->getResponse()->setBody(phpinfo());
-        }
+        // Especifico el layout que se utilizará para todas las acciones de este controller
+        $this->useLayout('layouts/main.phtml');
     }
+    
+    /**
+     * @param float $a
+     * @param float $b
+     */
+    public function add($a, $b)
+    {
+        // Obtengo la vista y paso las variables necesarias.
+        $this->getView()
+            ->addVar('title', sprintf('%s + %s', $a, $b))
+            ->addVar('num1', $a)
+            ->addVar('num2', $b)
+            ->addVar('result', $a+$b);
+        // Especifico la pantilla que se va a emplear.    
+        $this->render('add.phtml');
+    }
+    
+    public function info()
+    {
+        // No uso vista, seteo directamente el cuerpo de la respuesta.
+        $this->getResponse()->setBody(phpinfo());
+    }
+}
 ```
 
 ### Método *init()*
@@ -417,7 +417,7 @@ Cuando necesitemos utilizar una plantilla podremos hacer uso de la vista por def
 Para especificar la plantilla que queremos renderizar se empleará el método *render($template)* del objeto aplicación. El único parámetro que admite es la ruta relativa del fichero de la plantilla con respecto a la ruta base de las vistas (definida en el fichero de configuración de la aplicación en la sección views/path)
 
 ```
-    $app->render('add.phtml');
+$app->render('add.phtml');
 ```
 
 Las plantillas serán normalmente ficheros phtml (aunque podrían ser cualquier otra cosa).
@@ -425,65 +425,137 @@ Las plantillas serán normalmente ficheros phtml (aunque podrían ser cualquier 
 Ejemplo de una plantilla:
 
 ```
-    <html>
-    <head>
-        <title><?php echo $title?></title>
-    </head>
-    <body>
-    <div style="text-align: center; font-size: 40pt; margin: 40px;">
-        <?php echo $num1; ?> + <?php echo $num2; ?> = <?php echo $result; ?>
-    </div>
-    </body>
-    </html>
+<html>
+<head>
+    <title><?php echo $title?></title>
+</head>
+<body>
+<div style="text-align: center; font-size: 40pt; margin: 40px;">
+    <?php echo $num1; ?> + <?php echo $num2; ?> = <?php echo $result; ?>
+</div>
+</body>
+</html>
 ```
     
-## Vistas parciales
+### Helpers de vista
 
-Se pueden emplear vistas parciales dentro de otras vistas del siguiente modo:
+A las vistas se pueden añadir helpers (ver /src/Application/View/Helpers), de forma que podamos hacer llamadas a ciertas funciones desde las vistas. Leveret registra algunos helpers por defecto en las vistas. 
+
+Los helpers por defecto son:
+
+- _string _**translate(** _string_ $cadenaATraducir, _[$var1, $var2, ...]_ **)**: Devuelve la traducción de la cadena de texto $cadenaATraducir (para ello debe estar registrado un _TranslatorInterface_ como servicio de traducción en la aplicación). El primer parámetro es la cadena a traducir y es obligatorio, resto de parámetros son opcionales y son variables que se sustituirán en la cadena a traducir (como en la función _sprintf()_) 
+- _string_ **escapeHtml(** _string_ $htmlString **)**: Escapa las etiquetas html de una cadena.
+- _DateDecorationHelper_ **dateDecorator**: Devuelve una instancia de _DateDecorationHelper_ que permite decorar fechas (depende de que se haya registrado un _DateDecoratorInterface_ como servicio de la aplicación).
+- _Partial_ **partial(** _View_ $parentView, _string_ $templateRoute, _array_ $partialVars = [] **)**: Para más información ver sección "_Helper partial_".
+
+
+#### Helper translate
+Este helper permite traducir cadenas de texto en las vistas.
+
+Ejemplo de uso del helper translate en una vista:
 
 ```
-    <div>
-        <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
-    </div>
+<h2>Esto es una vista</h2>
+<?php echo $this->translate('Hola %s!', $nombre);?>
+```
+
+Para que se hagan las traducciones debemos registrar en la aplicación un servicio de traducción. En el siguiente ejemplo se muestra como se registra un traductor (de tipo gettext, ver [h4d/i18n](https://github.com/h4d/i18n)) como servicio de la aplicación (más info sobre servicios en la sección "_Inyector de dependencias / contenedor de servicios_" ):
+
+
+```
+// Register Translator as a service
+$app->registerService($app::TRANSLATION_SERVICE_NAME, function () use ($app)
+{
+    try
+    {
+        $options = [
+            GettextAdapter::OPTION_TRANSLATIONS_DIRECTORY => APP_DATA_DIR . '/translations',
+            GettextAdapter::OPTION_TRANSLATIONS_DOMAIN => 'translations',
+            GettextAdapter::OPTION_LOG_UNTRANSLATED_STRING => true,
+            GettextAdapter::OPTION_UNTRANSLATED_STRING_LOG_FILE => APP_LOGS_DIR . '/untranslated.txt'];
+        $adaptor = new GettextAdapter('en_GB.UTF-8', $options);
+        $translator = new Translator($adaptor);
+    }
+    catch (\Exception $e)
+    {
+        $translator = new NullTranslator();
+    }
+
+    return $translator;
+}, true);
+```
+#### Helper dateDecorator
+
+Este helper permite decorar/localizar las fechas en las vista. Puedes ver los métodos de los que dispone para ello en: /src/Application/View/Helpers/DateDecorationHelper.
+
+Algunos ejemplos de uso:
+
+```
+<p>
+    Current date and time: <?php echo $this->dateDecorator->dateTime($dateTimeInstance);?>
+    Current date: <?php echo $this->dateDecorator->date($dateTimeInstance);?>
+    Current time: <?php echo $this->dateDecorator->time($dateTimeInstance);?>
+</p>
+```
+
+#### Helper partial
+
+Se pueden emplear vistas parciales dentro de otras vistas mediante el método __partial__. La firma del método es la siguiente:
+
+_Partial_ **partial(**_View_ $parentView, _string_ $templateRoute, _array_ $partialVars = []**)**
+
+En donde: 
+
+- $parentView: es la vista contenedora.
+- $templateRoute: es la ruta de la platilla del partial.
+- $partialVars: es una array clave-valor con las variables que se le quieren pasar al partial.
+ 
+ 
+Ejemplo de uso en una vista: 
+
+```
+<div>
+    <?php echo $this->partial($this, APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
+</div>
 ```
 
 Las vistas parciales "heredan" todos los métodos y variables de las vistas contenedoras. 
 
-Está permitido el uso de vistas parciales en el interior de vistas parciales. Por ejemplo:
+Es posible utilizar una vista parcial dentro de otra vista parcial sirviéndose del método **getParent()**. A continuación se muestra un ejemplo.
 
 En la vista principal:
 
 ```
-    <div>
-        <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
-    </div>
+<div>
+    <?php echo $this->partial($this, APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
+</div>
 ```
     
-En APP_VIEWS_DIR.'/partials/test/partial.phtml':
+En APP\_VIEWS\_DIR.'/partials/test/partial.phtml' (uso del método **getParent()**):
 
 ```
-    <h1>Partial</h1>
-    <p>
-        <?php echo $this->translate('Hola %s! Esto es un partial.', $nombre);?>
-    </p>
+<h1>Partial</h1>
+<p>
+    <?php echo $this->translate('Hola %s! Esto es un partial.', $nombre);?>
+</p>
     
-    <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/internal.phtml');?>
+<?php echo $this->partial($this->getParent(), APP_VIEWS_DIR.'/partials/test/internal.phtml');?>
 ```
 
-En APP_VIEWS_DIR.'/partials/test/internal.phtml'
+En APP\_VIEWS\_DIR.'/partials/test/internal.phtml'
 
 ```
-    <h2>Partial interno</h2>
-    <?php echo $this->translate('Hola %s! Soy un partial dentro de otro partial', $nombre);?>
+<h2>Partial interno</h2>
+<?php echo $this->translate('Hola %s! Soy un partial dentro de otro partial', $nombre);?>
 ```
 
-### ¿Cómo se resuelven los nombres de variables dentro de los partials?
+##### ¿Cómo se resuelven los nombres de variables dentro de los partials?
 
 1. Si la variable está definida en el partial se usa esa variable.
 2. Si la variable no está definida en el partial y sí en su vista contenedora se utiza la variable de la vista contenedora. 
 3. Si la variable no está definida en el partial y tampoco en la vista contenedora, se lanza una excepción de renderizado.
 
-__OJO!__ Un partial interno no "hereda" las variables del partial contedor, sólo las de la vista contenedora.
+__OJO!__ Actualemente un partial interno no "hereda" las variables del partial contedor, sólo las de la vista contenedora.
 
 
 ## Layouts
@@ -493,8 +565,8 @@ Los layouts son vistas que se pueden emplear como un contenedor de otras vistas.
 Para hacer uso de un layout determinado se debe emplear el método de la aplicación **useLayout($template)**, en donde *$template* es la ruta relativa del fichero de la plantilla del layout con respecto a la ruta base de las vistas de la aplicación.
 
 ```
-    $app->useLayout('layouts/main.phtml');
-    $app->render('add.phtml');
+$app->useLayout('layouts/main.phtml');
+$app->render('add.phtml');
 ```
 
 ## Eventos
@@ -502,20 +574,20 @@ Para hacer uso de un layout determinado se debe emplear el método de la aplicac
 Tanto la aplicación como los controllers de Leveret implementan el patrón _publisher_, por lo que pueden publicar eventos mediante el método _publish(Event $event)_.
 
 ```
-    $app->publish($myEvent);
+$app->publish($myEvent);
 ```
 
 A los eventos de la aplicación pueden subscribirse tantos _listereners/observers/subscribers_ como sea necesario, para ello se utiliza el método _attachSubscriber(SubscriberInterface $subscriber)_. 
 
 ```
-    $app->attachSubscriber($mySubscriberOne);
-    $app->attachSubscriber($mySubscriberTwo);
+$app->attachSubscriber($mySubscriberOne);
+$app->attachSubscriber($mySubscriberTwo);
 ```
 
 Si se quiere retirar un listener se usaría el método _dettachSubscriber(SubscriberInterface $subscriber)_.
 
 ```
-    $app->dettachSubscriber($mySubscriberTwo);
+$app->dettachSubscriber($mySubscriberTwo);
 ```
 
 Los controllers disponen de los mismos métodos para agregar o retirar listeners. Todos los eventos que se publiquen desde un controller se propagan a la aplicación.
@@ -564,13 +636,13 @@ Ejemplo: Registro del servicio _'ServiceName'_. Al asignar el valor true al terc
 
 
 ```
-        $app->registerService('ServiceName', function ()
-        {
-            $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
-            $myService = new MyService($configFile);
+$app->registerService('ServiceName', function ()
+{
+    $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
+    $myService = new MyService($configFile);
 
-            return $myService;
-        }, true);
+    return $myService;
+}, true);
 ```
 
 Si quisiesemos que se creasen diferentes instancias de *MyService* cada vez que llamemos a **$app->getService(**_'ServiceName'_**)** bastaría con cambiar el valor del parámetro $singleton a false.
@@ -578,13 +650,13 @@ Si quisiesemos que se creasen diferentes instancias de *MyService* cada vez que 
 __Ejemplo:__ Registro del servicio _'ServiceName'_. Cada vez que se llama a **$app->getService(**_'ServiceName'_**)** se instancia un nuevo objeto de la clase *MyService* y se devuelve.
  
 ```
-        $app->registerService('ServiceName', function ()
-        {
-            $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
-            $myService = new MyService($configFile);
+$app->registerService('ServiceName', function ()
+{
+    $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
+    $myService = new MyService($configFile);
 
-            return $myService;
-        }, false);
+    return $myService;
+}, false);
 ```
  
 
@@ -595,7 +667,7 @@ __NOTA:__ El registro de callables tiene una ventaja importante sobre el registr
  Leveret permite el registro de pares clave-valor como servicios del siguiente modo:
  
 ```
-     $app->registerService('MyKey', 'MyValue');
+ $app->registerService('MyKey', 'MyValue');
 ```
  
  
@@ -604,7 +676,7 @@ __NOTA:__ El registro de callables tiene una ventaja importante sobre el registr
 Al igual que en el resto de casos, para registrar un recurso (resource) como un servicio en nuestra aplicación, haremos uso del método **$app->registerService(** *string* **$serviceName,** *resource* **$resuorce)**
 
 ```
-     $app->registerService('MyResource', $myResource);
+ $app->registerService('MyResource', $myResource);
 ```
 
 
@@ -648,101 +720,101 @@ $this->registerAclForController($this->getService(AdminLoggedInRequired::class),
 ## Ejemplo completo:
 
 ```
-    <?php
+<?php
     
-    use H4D\Leveret\Application;
-    use H4D\Leveret\Http\Response;
-    use H4D\Leveret\Http\Response\Headers;
-    use H4D\Logger;
+use H4D\Leveret\Application;
+use H4D\Leveret\Http\Response;
+use H4D\Leveret\Http\Response\Headers;
+use H4D\Logger;
     
-    require_once('../app/bootstrap.php');
+require_once('../app/bootstrap.php');
     
-    /** @var Application $app */
-    $app = new Application(APP_CONFIG_DIR.'/config.ini');
+/** @var Application $app */
+$app = new Application(APP_CONFIG_DIR.'/config.ini');
     
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // INI: Register routes and actions ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// INI: Register routes and actions ////////////////////////////////////////////////////////////////
     
-    // Simple action without params returning html contents using a template.
-    $app->registerRoute('GET', '/')
-        ->setAction(
-            function () use ($app)
-            {
-                $app->getLogger()->notice('It works!');
-                $app->render('default.phtml');
-            });
-    
-    // Action with one param, multiple predispatch actions and one postdispatch action returning html
-    // contents using a template.
-    $app->registerRoute('GET', '/hello/:name')
-        ->setAction(
-            function ($name) use ($app)
-            {
-                $app->getLogger()->notice('Hello', array('name' => $name));
-                $app->getView()->addVar('name', $name);
-                $app->render('hello.phtml');
-            })
-        ->addPreDispatchAction(
-            function ($route, $app)
-            {
-                $newParams = array();
-                /** @var \H4D\Leveret\Application\Route $route */
-                foreach($route->getParams() as $key => $value)
-                {
-                    $newParams[$key] = is_string($value) ? strtoupper($value) : $value;
-                }
-                $route->setParams($newParams);
-            })
-        ->addPreDispatchAction(
-            function ($route, $app)
-            {
-                $newParams = array();
-                /** @var \H4D\Leveret\Application\Route $route */
-                foreach($route->getParams() as $key => $value)
-                {
-                    $newParams[$key] = is_string($value) ?
-                        '"' . $value . '"' : $value;
-                }
-                $route->setParams($newParams);
-            })
-        ->addPostDispatchAction(
-            function ($route, $app)
-            {
-                /** @var Application $app */
-                $app->getResponse()->setStatusCode('404');
-            }
-        );
-    
-    // Action with multiple params returning JSON content type.
-    $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
-        ->setAction(
-            function ($num1, $num2) use ($app)
-            {
-                $result = $num1 + $num2;
-                $app->getLogger()->notice(sprintf('Result: %f', $result), array('num1' => $num1,
-                                                                                'num2' => $num2,
-                                                                                'result' => $result));
-                // Change response headers.
-                $app->getResponse()->getHeaders()->setContentType(Headers::CONTENT_TYPE_JSON);
-                $app->getResponse()->setBody(json_encode(array('num1' => $num1,
-                                                               'num2' => $num2,
-                                                               'result' => $result)));
-            })
-        ->addPreDispatchAction(function ($route, $app)
+// Simple action without params returning html contents using a template.
+$app->registerRoute('GET', '/')
+    ->setAction(
+        function () use ($app)
         {
-            /** @var Application $app */
-            if ($app->getRequest()->hasAuth())
-            {
-                $user = $app->getRequest()->getAuthUser();
-                $pass = $app->getRequest()->getAuthPassword();
-                $app->getLogger()->debug(sprintf('User: %s, Pass: %s', $user, $pass));
-            }
-    
+            $app->getLogger()->notice('It works!');
+            $app->render('default.phtml');
         });
     
-    // END: Register routes and actions ////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
+// Action with one param, multiple predispatch actions and one postdispatch action returning html
+// contents using a template.
+$app->registerRoute('GET', '/hello/:name')
+    ->setAction(
+        function ($name) use ($app)
+        {
+            $app->getLogger()->notice('Hello', array('name' => $name));
+            $app->getView()->addVar('name', $name);
+            $app->render('hello.phtml');
+        })
+    ->addPreDispatchAction(
+        function ($route, $app)
+        {
+            $newParams = array();
+            /** @var \H4D\Leveret\Application\Route $route */
+            foreach($route->getParams() as $key => $value)
+            {
+                $newParams[$key] = is_string($value) ? strtoupper($value) : $value;
+            }
+            $route->setParams($newParams);
+        })
+    ->addPreDispatchAction(
+        function ($route, $app)
+        {
+            $newParams = array();
+            /** @var \H4D\Leveret\Application\Route $route */
+            foreach($route->getParams() as $key => $value)
+            {
+                $newParams[$key] = is_string($value) ?
+                    '"' . $value . '"' : $value;
+            }
+            $route->setParams($newParams);
+        })
+    ->addPostDispatchAction(
+        function ($route, $app)
+        {
+            /** @var Application $app */
+            $app->getResponse()->setStatusCode('404');
+        }
+    );
     
-    // Run the application!
-    $app->run();
+// Action with multiple params returning JSON content type.
+$app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
+    ->setAction(
+        function ($num1, $num2) use ($app)
+        {
+            $result = $num1 + $num2;
+            $app->getLogger()->notice(sprintf('Result: %f', $result), array('num1' => $num1,
+                                                                            'num2' => $num2,
+                                                                            'result' => $result));
+            // Change response headers.
+            $app->getResponse()->getHeaders()->setContentType(Headers::CONTENT_TYPE_JSON);
+            $app->getResponse()->setBody(json_encode(array('num1' => $num1,
+                                                           'num2' => $num2,
+                                                           'result' => $result)));
+        })
+    ->addPreDispatchAction(function ($route, $app)
+    {
+        /** @var Application $app */
+        if ($app->getRequest()->hasAuth())
+        {
+            $user = $app->getRequest()->getAuthUser();
+            $pass = $app->getRequest()->getAuthPassword();
+            $app->getLogger()->debug(sprintf('User: %s, Pass: %s', $user, $pass));
+        }
+    
+    });
+    
+// END: Register routes and actions ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+// Run the application!
+$app->run();
 ```
