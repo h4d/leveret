@@ -9,6 +9,17 @@ use H4D\Leveret\Application\View\Partial;
 
 class PartialHelper extends AbstractHelper
 {
+
+    /**
+     * AbstractHelper constructor.
+     *
+     * @param string $alias
+     */
+    public function __construct($alias)
+    {
+        $this->alias = $alias;
+    }
+
     /**
      * @param View $parentView
      * @param string $templateRoute
