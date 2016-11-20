@@ -9,10 +9,6 @@ use H4D\I18n\DateDecorator;
 class DateDecorationHelper extends AbstractHelper
 {
     /**
-     * @var string
-     */
-    protected $alias;
-    /**
      * @var DateDecorator
      */
     protected $dateDecorator;
@@ -35,14 +31,6 @@ class DateDecorationHelper extends AbstractHelper
     public function __invoke()
     {
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
     }
 
     /**

@@ -9,10 +9,6 @@ use H4D\I18n\Translator;
 class TranslationHelper extends AbstractHelper
 {
     /**
-     * @var string
-     */
-    protected $alias;
-    /**
      * @var Translator
      */
     protected $tranlator;
@@ -41,11 +37,4 @@ class TranslationHelper extends AbstractHelper
         return call_user_func_array([$this->tranlator, 'translate'], func_get_args());
     }
 
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
 }
