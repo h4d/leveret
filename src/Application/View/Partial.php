@@ -3,14 +3,11 @@
 
 namespace H4D\Leveret\Application\View;
 
-
-use H4D\I18n\TranslatorAwareTrait;
 use H4D\Leveret\Application\View;
 use H4D\Template\Template;
 
 class Partial extends Template
 {
-    use TranslatorAwareTrait;
 
     /**
      * @var array
