@@ -12,11 +12,11 @@ class Partial extends Template
     /**
      * @var array
      */
-    protected $requiredConstructorOptions = ['view'];
+    protected $requiredConstructorOptions = ['parent'];
     /**
      * @var View
      */
-    protected $view;
+    protected $parent;
 
     /**
      * Partial constructor.
@@ -26,25 +26,25 @@ class Partial extends Template
     public function __construct(array $options)
     {
         parent::__construct($options);
-        $this->setView($options['view']);
+        $this->setParent($options['parent']);
     }
 
     /**
      * @return View
      */
-    public function getView()
+    public function getParent()
     {
-        return $this->view;
+        return $this->parent;
     }
 
     /**
-     * @param View $view
+     * @param View $parent
      *
      * @return Partial
      */
-    public function setView(View $view)
+    public function setParent(View $parent)
     {
-        $this->view = $view;
+        $this->parent = $parent;
 
         return $this;
     }
@@ -57,7 +57,7 @@ class Partial extends Template
      */
     public function __call($name, $arguments)
     {
-        return $this->getView()->__call($name, $arguments);
+        return $this->getParent()->__call($name, $arguments);
     }
 
     /**
@@ -67,6 +67,6 @@ class Partial extends Template
      */
     public function __get($name)
     {
-        return $this->getView()->__get($name);
+        return $this->getParent()->__get($name);
     }
 }

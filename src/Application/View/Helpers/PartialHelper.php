@@ -29,7 +29,7 @@ class PartialHelper extends AbstractHelper
      */
     public function __invoke(View $parentView, $templateRoute, array $partialVars = [])
     {
-        $partial = new Partial(['view' => $parentView]);
+        $partial = new Partial(['parent' => $parentView]);
         $partial->setTemplateFile($templateRoute);
         // Add main view vars
         $partial->addVars($parentView->getVars());
