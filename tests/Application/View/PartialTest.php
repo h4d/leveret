@@ -58,6 +58,5 @@ class PartialTest extends \PHPUnit_Framework_TestCase
         // Get view helper via partial's magic __get
         /** @noinspection PhpUndefinedFieldInspection */
         $this->assertEquals($helper, $partial->escapeHtml);
-        $this->assertEquals($helper, $partial->getVars());
     }
 }
