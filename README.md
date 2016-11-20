@@ -439,9 +439,11 @@ Ejemplo de una plantilla:
     
 ### Helpers de vista
 
-A las vistas se pueden añadir helpers (ver /src/Application/View/Helpers), de forma que podamos hacer llamadas a ciertas funciones desde las vistas. Leveret registra algunos helpers por defecto en las vistas. 
+A las vistas se pueden añadir helpers (ver /src/Application/View/Helpers), de forma que podamos hacer llamadas a ciertas funciones o acceder a determinados objetos de forma cómoda desde las vistas. 
 
-Los helpers por defecto son:
+Las aplicaciones de Leveret tienen un lugar destinado para el registro de helpers de vista, ese lugar es el método **initViewHelpers()** de la clase de nuestra aplicación.
+
+Leveret registra algunos helpers por defecto en las vistas. Los helpers por defecto son:
 
 - _string _**translate(** _string_ $cadenaATraducir, _[$var1, $var2, ...]_ **)**: Devuelve la traducción de la cadena de texto $cadenaATraducir (para ello debe estar registrado un _TranslatorInterface_ como servicio de traducción en la aplicación). El primer parámetro es la cadena a traducir y es obligatorio, resto de parámetros son opcionales y son variables que se sustituirán en la cadena a traducir (como en la función _sprintf()_) 
 - _string_ **escapeHtml(** _string_ $htmlString **)**: Escapa las etiquetas html de una cadena.
