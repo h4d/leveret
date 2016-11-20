@@ -287,7 +287,7 @@ class Application implements PublisherInterface
         // Register partial helper
         $partialHelper = new PartialHelper('partial');
         $this->layout->registerHelper($partialHelper);
-        $this->layout->registerHelper($partialHelper);
+        $this->view->registerHelper($partialHelper);
 
         // Register translation helper
         if ($this->isServiceRegistered(self::TRANSLATION_SERVICE_NAME))
