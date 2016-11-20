@@ -11,7 +11,7 @@ class TranslationHelper extends AbstractHelper
     /**
      * @var TranslatorInterface
      */
-    protected $tranlator;
+    protected $translator;
 
     /**
      * TranslatorHelper constructor.
@@ -22,7 +22,7 @@ class TranslationHelper extends AbstractHelper
     public function __construct($alias, TranslatorInterface $translator)
     {
         $this->alias = $alias;
-        $this->tranlator = $translator;
+        $this->translator = $translator;
     }
 
     /**
@@ -34,7 +34,7 @@ class TranslationHelper extends AbstractHelper
      */
     public function __invoke($string)
     {
-        return call_user_func_array([$this->tranlator, 'translate'], func_get_args());
+        return call_user_func_array([$this->translator, 'translate'], func_get_args());
     }
 
 }
