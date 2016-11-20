@@ -4,12 +4,12 @@
 namespace H4D\Leveret\Application\View\Helpers;
 
 
-use H4D\I18n\DateDecorator;
+use H4D\I18n\DateDecoratorInterface;
 
 class DateDecorationHelper extends AbstractHelper
 {
     /**
-     * @var DateDecorator
+     * @var DateDecoratorInterface
      */
     protected $dateDecorator;
 
@@ -17,9 +17,9 @@ class DateDecorationHelper extends AbstractHelper
      * DateDecoratorHelper constructor.
      *
      * @param string $alias
-     * @param DateDecorator $dateDecorator
+     * @param DateDecoratorInterface $dateDecorator
      */
-    public function __construct($alias, DateDecorator $dateDecorator)
+    public function __construct($alias, DateDecoratorInterface $dateDecorator)
     {
         $this->alias = $alias;
         $this->dateDecorator = $dateDecorator;

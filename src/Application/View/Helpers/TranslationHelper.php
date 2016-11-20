@@ -4,12 +4,12 @@
 namespace H4D\Leveret\Application\View\Helpers;
 
 
-use H4D\I18n\Translator;
+use H4D\I18n\TranslatorInterface;
 
 class TranslationHelper extends AbstractHelper
 {
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $tranlator;
 
@@ -17,9 +17,9 @@ class TranslationHelper extends AbstractHelper
      * TranslatorHelper constructor.
      *
      * @param string $alias
-     * @param Translator $translator
+     * @param TranslatorInterface $translator
      */
-    public function __construct($alias, Translator $translator)
+    public function __construct($alias, TranslatorInterface $translator)
     {
         $this->alias = $alias;
         $this->tranlator = $translator;
