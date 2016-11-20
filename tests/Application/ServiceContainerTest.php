@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Application;
+namespace H4D\Leveret\Tests\Unit\Application;
 
 use H4D\Leveret\Service\ServiceContainer;
 use H4D\Leveret\Service\ServiceInterface;

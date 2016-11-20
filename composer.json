@@ -27,6 +27,8 @@
   },
   "repositories": [],
   "autoload": {
-    "psr-4": {"H4D\\Leveret\\": "src"}
+    "psr-4": {
+      "H4D\\Leveret\\": "src",
+      "H4D\\Leveret\\Tests\\Unit\\": "tests"}
   }
 }

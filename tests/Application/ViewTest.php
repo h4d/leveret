@@ -1,60 +1,70 @@
 <?php
 
 
-namespace Application;
+namespace H4D\Leveret\Tests\Unit\Application;
 
 
+use H4D\I18n\DateDecorator;
 use H4D\Leveret\Application\View;
+use H4D\Leveret\Tests\Unit\PrivateAccessTrait;
+use H4D\Patterns\Collections\ArrayCollection;
 
 class ViewTest extends \PHPUnit_Framework_TestCase
 {
+    use PrivateAccessTrait;
+
     public function test_construct_returnsViewInstance()
     {
         $view = new View();
         $this->assertTrue($view instanceof View);
     }
 
-    public function test_translate_withNoTranslator_returnsSameString()
+    public function test_registerHelper_storesNewHelperProperly()
     {
-        $string = 'Hello world!';
         $view = new View();
-        $translated = $view->translate($string);
-        $this->assertTrue(is_string($translated));
-        $this->assertEquals($string, $translated);
+        $helper = new View\Helpers\EscapeHelper('escape');
+        $view->registerHelper($helper);
+        /** @var ArrayCollection $helpersCollection */
+        $helpersCollection = $this->getNonPublicPropertyValue($view, 'helpersCollection');
+        $this->assertTrue($helpersCollection->has('escape'));
+        $this->assertEquals($helper, $helpersCollection->get('escape'));
     }
 
-    public function test_escapeHtml_escapesHtmlProperly()
+    /**
+     * @depends test_registerHelper_storesNewHelperProperly
+     */
+    public function test_getHelper_worksProperly()
     {
-        $htmlString = '<h1>Hello world!</h1>';
-        $spectedString = '&lt;h1&gt;Hello world!&lt;/h1&gt;';
         $view = new View();
-        $escapedString = $view->escapeHtml($htmlString);
-        $this->assertEquals($spectedString, $escapedString);
+        $helper = new View\Helpers\EscapeHelper('escape');
+        $view->registerHelper($helper);
+
+        $this->assertEquals($helper, $view->getHelper('escape'));
     }
 
-    public function test_formatDate_withDateTime_formatsDateProperly()
+    /**
+     * @depends test_registerHelper_storesNewHelperProperly
+     */
+    public function test_magicMethods_workProperly()
     {
         date_default_timezone_set('UTC');
-        $date = new \DateTime('2015-08-18T12:30:59');
         $view = new View();
 
-        $formatedDate = $view->formatDate($date, 'date', 'es_ES');
-        $this->assertEquals('18/08/2015', $formatedDate);
-        $formatedDate = $view->formatDate($date, 'time', 'es_ES');
-        $this->assertEquals('12:30:59 (UTC)', $formatedDate);
-        $formatedDate = $view->formatDate($date, 'shortTime', 'es_ES');
-        $this->assertEquals('12:30 (UTC)', $formatedDate);
-        $formatedDate = $view->formatDate($date, 'dateTime', 'es_ES');
-        $this->assertEquals('18/08/2015 12:30:59 (UTC)', $formatedDate);
+        $helper = new View\Helpers\EscapeHelper('escape');
+        $view->registerHelper($helper);
 
-        $formatedDate = $view->formatDate($date, 'date', 'en_GB');
-        $this->assertEquals('2015-08-18', $formatedDate);
-        $formatedDate = $view->formatDate($date, 'time', 'en_GB');
-        $this->assertEquals('12:30:59 (UTC)', $formatedDate);
-        $formatedDate = $view->formatDate($date, 'shortTime', 'en_GB');
-        $this->assertEquals('12:30 (UTC)', $formatedDate);
-        $formatedDate = $view->formatDate($date, 'dateTime', 'en_GB');
-        $this->assertEquals('2015-08-18 12:30:59 (UTC)', $formatedDate);
+        $helper = new View\Helpers\DateDecorationHelper('dateDecorator', new DateDecorator());
+        $view->registerHelper($helper);
 
+        $testTest = 'test';
+        /** @noinspection PhpUndefinedMethodInspection */
+        $result = $view->escape($testTest);
+        $this->assertEquals($result, $testTest);
+
+        $dateString = '2010-01-01';
+        $date = new \DateTime($dateString);
+        /** @noinspection PhpUndefinedFieldInspection */
+        $result = $view->dateDecorator->date($date);
+        $this->assertEquals($dateString, $result);
     }
 }

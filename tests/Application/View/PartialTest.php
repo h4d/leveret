@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Application\View;
+namespace H4D\Leveret\Tests\Unit\Application\View;
 
 use H4D\Leveret\Application\View;
 use H4D\Leveret\Application\View\Partial;
@@ -39,11 +39,25 @@ class PartialTest extends \PHPUnit_Framework_TestCase
     public function test_call_worksProperly()
     {
         $view = new View();
+        $view->registerHelper(new View\Helpers\EscapeHelper('escapeHtml'));
         $partial = new Partial(['view'=>$view]);
         $input = '<h1>hello</h1>';
-        // Call view method via partial's magic __call
+        // Call view helper via partial's magic __call
         /** @noinspection PhpUndefinedMethodInspection */
         $escaped = $partial->escapeHtml($input);
         $this->assertEquals(htmlspecialchars($input), $escaped);
+    }
+
+    public function test_get_worksProperly()
+    {
+        $view = new View();
+        $helper = new View\Helpers\EscapeHelper('escapeHtml');
+        $view->registerHelper($helper);
+        $view->addVar('testVar', 'test');
+        $partial = new Partial(['view'=>$view]);
+        // Get view helper via partial's magic __get
+        /** @noinspection PhpUndefinedFieldInspection */
+        $this->assertEquals($helper, $partial->escapeHtml);
+        $this->assertEquals($helper, $partial->getVars());
     }
 }
