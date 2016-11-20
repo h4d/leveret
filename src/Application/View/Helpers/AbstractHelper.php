@@ -4,11 +4,21 @@
 namespace H4D\Leveret\Application\View\Helpers;
 
 
+use H4D\Leveret\Application\View;
+
 abstract class AbstractHelper
 {
     /**
+     * @var string
+     */
+    protected $alias;
+
+    /**
      * @return string
      */
-    abstract public function getAlias();
+    public function getAlias()
+    {
+        return $this->alias;
+    }
 
 }
