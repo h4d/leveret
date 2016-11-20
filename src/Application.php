@@ -2,6 +2,8 @@
 
 namespace H4D\Leveret;
 
+use H4D\I18n\DateDecorator;
+use H4D\I18n\NullTranslator;
 use H4D\Leveret\Application\AclInterface;
 use H4D\Leveret\Application\Acls;
 use H4D\Leveret\Application\Config;
@@ -211,6 +213,9 @@ class Application implements PublisherInterface
         $this->initRoutes();
         // Init views
         $this->initViews();
+        // Init view helpers
+        $this->initDefaultViewHelpers();
+        $this->initViewHelpers();
     }
 
     /**
@@ -272,13 +277,19 @@ class Application implements PublisherInterface
     }
 
     /**
-     * Init views (wiew and layout) and register some default view helpers.
+     * Init views.
      */
     protected function initViews()
     {
         $this->layout = new View();
         $this->view = new View();
+    }
 
+    /**
+     * Register some default view helpers.
+     */
+    protected function initDefaultViewHelpers()
+    {
         // Register scape helper
         $escapeHelper = new EscapeHelper('escapeHtml');
         $this->layout->registerHelper($escapeHelper);
@@ -290,22 +301,32 @@ class Application implements PublisherInterface
         $this->view->registerHelper($partialHelper);
 
         // Register translation helper
+        $translator = new NullTranslator();
         if ($this->isServiceRegistered(self::TRANSLATION_SERVICE_NAME))
         {
-            $tranlastionHelper = new TranslationHelper('translate',
-                                                       $this->getService(self::TRANSLATION_SERVICE_NAME));
-            $this->layout->registerHelper($tranlastionHelper);
-            $this->view->registerHelper($tranlastionHelper);
+            $translator = $this->getService(self::TRANSLATION_SERVICE_NAME);
         }
+        $tranlastionHelper = new TranslationHelper('translate', $translator);
+        $this->layout->registerHelper($tranlastionHelper);
+        $this->view->registerHelper($tranlastionHelper);
 
         // Register date decoration helper
+        $dateDecorator = new DateDecorator();
         if ($this->isServiceRegistered(self::DATE_DECORATION_SERVICE_NAME))
         {
-            $dateDecoratorHelper = new DateDecorationHelper('dateDecorator',
-                                                            $this->getService(self::DATE_DECORATION_SERVICE_NAME));
-            $this->layout->registerHelper($dateDecoratorHelper);
-            $this->view->registerHelper($dateDecoratorHelper);
+            $dateDecorator = $this->getService(self::DATE_DECORATION_SERVICE_NAME);
         }
+        $dateDecoratorHelper = new DateDecorationHelper('dateDecorator', $dateDecorator);
+        $this->layout->registerHelper($dateDecoratorHelper);
+        $this->view->registerHelper($dateDecoratorHelper);
+    }
+
+    /**
+     * Method for registering view helpers.
+     */
+    public function initViewHelpers()
+    {
+
     }
 
     /**
