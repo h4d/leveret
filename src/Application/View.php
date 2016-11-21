@@ -2,140 +2,87 @@
 
 namespace H4D\Leveret\Application;
 
-use H4D\I18n\DateDecorator;
-use H4D\I18n\DateDecoratorAwareTrait;
-use H4D\I18n\NullTranslator;
-use H4D\I18n\TranslatorAwareTrait;
+use H4D\Leveret\Application\View\Helpers\AbstractHelper;
+use H4D\Leveret\Exception\ViewException;
+use H4D\Patterns\Collections\ArrayCollection;
 use H4D\Template\TemplateTrait;
-use H4D\Leveret\Application\View\Partial;
 
 class View
 {
-
     use TemplateTrait;
-    use TranslatorAwareTrait;
-    use DateDecoratorAwareTrait;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $helpersCollection;
 
     public function __construct()
     {
-        $this->translator = new NullTranslator();
-        $this->dateDecorator = new DateDecorator();
+        $this->helpersCollection = new ArrayCollection([]);
     }
 
     /**
-     * This function supports extra params for var substitution in $string.
+     * @param string $name
+     * @param array $arguments
      *
-     * @param $string
-     *
-     * @return string
+     * @return mixed
+     * @throws ViewException
      */
-    public function translate($string)
+    public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->translator, 'translate'], func_get_args());
-    }
-
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    public function escapeHtml($string)
-    {
-        return htmlspecialchars($string);
-    }
-
-    /**
-     * @param string $route
-     * @param array $vars
-     *
-     * @return Partial
-     */
-    public function partial($route, array $vars = [])
-    {
-        $partial = new Partial(['view' => $this]);
-        $partial->setTemplateFile($route);
-        // Add main view vars
-        $partial->addVars($this->getVars());
-        // Add local vars (can overide main view vars)
-        if (count($vars) > 0)
+        if (!$this->helpersCollection->has($name))
         {
-            $partial->addVars($vars);
+            throw new ViewException(sprintf('View helper "%s" not found!', $name));
         }
 
-        return $partial;
+        if (!is_callable($this->helpersCollection->get($name)))
+        {
+            throw new ViewException(sprintf('View helper "%s" is not callable!', $name));
+        }
+
+        return call_user_func_array($this->helpersCollection->get($name), $arguments);
     }
 
     /**
-     * @param \DateTime|string $date
-     * @param string $formatAlias
-     * @param string $locale
+     * @param string $name
      *
-     * @return string
+     * @return AbstractHelper
+     * @throws ViewException
      */
-    public function formatDate($date, $formatAlias, $locale = '')
+    public function __get($name)
     {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getFormattedDate($date, $formatAlias, $locale);
+        return $this->getHelper($name);
     }
 
     /**
-     * @param \DateTime|string $date
-     * @param string $locale
+     * @param AbstractHelper $helper
      *
-     * @return string
+     * @return $this
      */
-    public function date($date, $locale = '')
+    public function registerHelper(AbstractHelper $helper)
     {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getDate($date, $locale);
+        if (!$this->helpersCollection->has($helper->getAlias()))
+        {
+            $this->helpersCollection->set($helper->getAlias(), $helper);
+        }
+
+        return $this;
     }
 
     /**
-     * @param \DateTime|string $date
-     * @param string $locale
+     * @param string $name
      *
-     * @return string
+     * @return AbstractHelper
+     * @throws ViewException
      */
-    public function dateTime($date, $locale = '')
+    public function getHelper($name)
     {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getDateTime($date, $locale);
-    }
+        if (!$this->helpersCollection->has($name))
+        {
+            throw new ViewException(sprintf('View helper "%s" not found!', $name));
+        }
 
-    /**
-     * @param \DateTime|string $date
-     * @param string $locale
-     *
-     * @return string
-     */
-    public function timestamp($date, $locale = '')
-    {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getTimestamp($date, $locale);
-    }
-
-    /**
-     * @param \DateTime|string $date
-     * @param string $locale
-     *
-     * @return string
-     */
-    public function time($date, $locale = '')
-    {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getTime($date, $locale);
-    }
-
-    /**
-     * @param \DateTime|string $date
-     * @param string $locale
-     *
-     * @return string
-     */
-    public function timeShort($date, $locale = '')
-    {
-        $date = (is_string($date)) ? new \DateTime($date) : $date;
-        return $this->dateDecorator->getTimeShort($date, $locale);
+        return $this->helpersCollection->get($name);
     }
 
 }

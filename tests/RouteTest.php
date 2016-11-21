@@ -1,11 +1,13 @@
 <?php
 
-require_once __DIR__.'/Mocks/SampleAuth.php';
-require_once __DIR__.'/Mocks/SampleConstraint.php';
+namespace H4D\Leveret\Tests\Unit;
 
 use H4D\Leveret\Application\Route;
+use H4D\Leveret\Filter\Filters\DefaultFilter;
+use H4D\Leveret\Tests\Unit\Mocks\SampleAuth;
+use H4D\Leveret\Tests\Unit\Mocks\SampleConstraint;
 
-class RouteTest extends PHPUnit_Framework_TestCase
+class RouteTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -84,7 +86,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
      */
     public function test_authRequiredAndGetAuthenticator_worksProperly()
     {
-        $auth = new \Mocks\SampleAuth();
+        $auth = new SampleAuth();
         $route = $this->getRoute();
         $route->authRequired($auth);
         $this->assertEquals($auth, $route->getAuthenticator());
@@ -95,7 +97,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
      */
     public function test_hasAuthRequirements_returnsProperValues()
     {
-        $auth = new \Mocks\SampleAuth();
+        $auth = new SampleAuth();
         $route = $this->getRoute();
         $this->assertFalse($route->hasAuthRequirements());
         $route->authRequired($auth);
@@ -181,7 +183,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
     {
         $route = $this->getRoute();
         $this->assertNull($route->getDefaultFilter());
-        $filter = new \H4D\Leveret\Filter\Filters\DefaultFilter();
+        $filter = new DefaultFilter();
         $route->setDefaultFilter($filter);
         $this->assertEquals($filter, $route->getDefaultFilter());
     }
@@ -192,7 +194,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
     public function test_paramsSetterAndGetters_worksProperly()
     {
         $route = Route::create('/test/params/:var1/:var2');
-        $route->setDefaultFilter(new \H4D\Leveret\Filter\Filters\DefaultFilter());
+        $route->setDefaultFilter(new DefaultFilter());
         $this->assertEquals([], $route->getParams());
         $route->setParams(['value1', 'value2']);
         $this->assertEquals([2 => 'value1', 3 => 'value2'], $route->getParams());
@@ -222,7 +224,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
     {
         $r = $this->getRoute();
         $this->assertEquals([], $r->getRequestConstraints());
-        $constraints = [new \Mocks\SampleConstraint()];
+        $constraints = [new SampleConstraint()];
         $r->addRequestConstraints('var1', $constraints);
         $this->assertEquals(['var1' => $constraints], $r->getRequestConstraints());
     }
@@ -234,7 +236,7 @@ class RouteTest extends PHPUnit_Framework_TestCase
     {
         $r = $this->getRoute();
         $this->assertFalse($r->hasRequestConstraints());
-        $constraints = [new \Mocks\SampleConstraint()];
+        $constraints = [new SampleConstraint()];
         $r->addRequestConstraints('var1', $constraints);
         $this->assertTrue($r->hasRequestConstraints());
     }

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Mocks;
+namespace H4D\Leveret\Tests\Unit\Mocks;
 
 
 use H4D\Leveret\Validation\ConstraintInterface;

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Application\Config;
+namespace H4D\Leveret\Tests\Unit\Application\Config;
 
 
 use H4D\Leveret\Application\Config\Route;

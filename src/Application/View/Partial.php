@@ -3,23 +3,20 @@
 
 namespace H4D\Leveret\Application\View;
 
-
-use H4D\I18n\TranslatorAwareTrait;
 use H4D\Leveret\Application\View;
 use H4D\Template\Template;
 
 class Partial extends Template
 {
-    use TranslatorAwareTrait;
 
     /**
      * @var array
      */
-    protected $requiredConstructorOptions = ['view'];
+    protected $requiredConstructorOptions = ['parent'];
     /**
      * @var View
      */
-    protected $view;
+    protected $parent;
 
     /**
      * Partial constructor.
@@ -29,25 +26,25 @@ class Partial extends Template
     public function __construct(array $options)
     {
         parent::__construct($options);
-        $this->setView($options['view']);
+        $this->setParent($options['parent']);
     }
 
     /**
      * @return View
      */
-    public function getView()
+    public function getParent()
     {
-        return $this->view;
+        return $this->parent;
     }
 
     /**
-     * @param View $view
+     * @param View $parent
      *
      * @return Partial
      */
-    public function setView(View $view)
+    public function setParent(View $parent)
     {
-        $this->view = $view;
+        $this->parent = $parent;
 
         return $this;
     }
@@ -60,7 +57,16 @@ class Partial extends Template
      */
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->getView(), $name], $arguments);
+        return $this->getParent()->__call($name, $arguments);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return Helpers\AbstractHelper
+     */
+    public function __get($name)
+    {
+        return $this->getParent()->__get($name);
+    }
 }
