@@ -324,7 +324,7 @@ class Application implements PublisherInterface
     /**
      * Method for registering view helpers.
      */
-    public function initViewHelpers()
+    protected function initViewHelpers()
     {
 
     }
