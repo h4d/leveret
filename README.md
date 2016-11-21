@@ -2,7 +2,7 @@
 
 Es un microframework que permite crear aplicaciones HTTP de forma sencilla (al estilo de slim, silex, etc).
 
-```
+```php
 $app = new Application();
 $app->registerRoute('GET', '/hello/:string')
     ->setAction(
@@ -15,7 +15,7 @@ $app->run();
 
 ## ¿Cómo se instala?
 
-Para instalar leveret vía composer debes ejecutar:
+Para instalar Leveret vía composer debes ejecutar:
 
 ```
 $ composer require h4d/leveret
@@ -31,11 +31,11 @@ Para que funcione la aplicación es necesario crear un fichero de configuración
 
 En el siguiente cuadro se muestra el contenido del fichero de configuración por defecto. 
 
-```
+```ini
 [application]
 ; Application name
 name = NoNamedApp
-; Application environmnet: production, development.
+; Application environment: production, development.
 environment = production
 ; Application root directory.
 path = ../app
@@ -56,7 +56,7 @@ registerRoutesDefinedInConfigFile = true
 path = ../app/views
     
 [routes]
-; Example: Call appplication method
+; Example: Call application method
 appInfo[pattern] = "/app/info"
 appInfo[method] = "GET"
 appInfo[callback] = "renderAppInfo"
@@ -66,11 +66,11 @@ appInfo[callback] = "renderAppInfo"
 ;status[callback] = "Your/Controller/ClassName::controllerMethod"
 ```
         
-**NOTA:** Si las rutas indicadas en el fichero de configuración son relativas iran referidas al directorio raiz del servidor.
+**NOTA:** Si las rutas indicadas en el fichero de configuración son relativas irán referidas al directorio raíz del servidor.
 
 ### Instanciación de un aplicación
 
-```
+```php
 /** @var \H4D\Leveret\Application $app */
 $app = new \H4D\Leveret\Application($configFilePath);
 ```
@@ -86,7 +86,7 @@ Las representaciones de las rutas soportan "cadenas comodín". El formato válid
  Los tipos soportados hasta el momento por las cadenas comodín son: 
 
  - **word**: Una palabra **([\w]* )**.
- - **string**: Cualquier cadena de caractereres de la a-z, 0-9, guiones altos, guiones bajos y espacios **([a-zA-Z0-9- _]*)** . 
+ - **string**: Cualquier cadena de caracteres de la a-z, 0-9, guiones altos, guiones bajos y espacios **([a-zA-Z0-9- _]*)** . 
  - **integer** o **int**: Número entero con signo opcional **([-+]?[0-9]*)**.
  - **float** o **number**: Número con parte decimal y signo opcional **([-+]?[0-9]*[.]?[0-9]+)**.
 
@@ -107,7 +107,7 @@ Ejemplo de reprentaciones de rutas:
     
 A cada ruta se le debe asignar una acción mediante el método *setAction($clousure)*, del siguiente modo:    
 
-```
+```php
 // Action with multiple params.
 $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
     ->setAction(
@@ -122,13 +122,13 @@ $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')
 ```            
     
 
-En el caso de querer pasar otras variables a la clousue, o incluso la aplicación completa, lo podemos hacer mediante el uso de **use**:
+En el caso de querer pasar otras variables a la clousure, o incluso la aplicación completa, lo podemos hacer mediante el uso de **use**:
 
 Un modo alternativo de asignar acciones a las rutas es mediante el uso de controllers. Se puede establecer la dupla controller/acción vía método *useController($controllerClassName, $controllerClassMethod)*, en donde el primer parámetro es el nombre de la clase del controller y el segundo es el nombre del método que queremos que sea ejecutado durante el dispatch.
 
 Esto es un ejemplo de asignación de una dupla controller/acción a una ruta.
 
-```
+```php
 $app->registerRoute('GET', '/add/:(float)num1/:(float)num2')->useController('MathController', 'add');
 ```
 
@@ -137,7 +137,7 @@ métodos *addPreDispatchAction($callable)* y *addPostDispatchAction($callable)*.
 
 En el siguiente ejemplo se añade una acción de predispatch que modifica los parámetros de la petición, poniendo en mayúsculas todos los parámetros de tipo string.
 
-```
+```php
 $app->registerRoute('GET', '/hello/:name')
     ->setAction(
         function ($name) use ($app)
@@ -200,7 +200,7 @@ Cuando se registra una ruta en la aplicación se pueden añadir los validadores 
 
 En el siguiente ejemplo de añaden varias reglas de validación a los parámetros _username_ y _alias_. 
  
-```
+```php
  $this->registerRoute('POST', '/admin/deploy-request')
       ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()])
       ->addRequestConstraints('alias', [new Required(), new NotBlank(),
@@ -212,7 +212,7 @@ Las reglas de validación deben ser instancias de clases que cumplan con la inte
 
 En el siguiente ejemplo se muestra el uso de una regla de validación de H4D mediante el uso del adaptador creado para tal efecto:
 
-```
+```php
 $app = new Application();
 $app->registerRoute('GET', '/hello/:(string)name')
     ->addRequestConstraints('name', new H4DConstraintAdapter((new Enum())->setOptions(['paco', 'maria'])))
@@ -231,7 +231,7 @@ $app->run();
 
 En el siguiente ejemplo se muestra el uso de reglas de validación de Symfony:
 
-```
+```php
 $app = new Application();
 $app->registerRoute('GET', '/hello/:(string)name')
     ->setRequiredParam('name')
@@ -270,7 +270,7 @@ Para definir qué parámetros de una ruta determinada son requeridos se dispone 
  
 Ejemplo de uso:
 
-```
+```php
 $this->registerRoute('POST', '/admin/deploy-request')
     ->setRequiredParam('username')
     ->addRequestConstraints('username', [new Required(), new NotBlank(), new Email()]);
@@ -289,7 +289,7 @@ Los tres modos se pueden configurar mediante el método __setAutoRequestValidati
 
 Para cada uno de los modos existen constantes definidas en la clase Application.
 
-```
+```php
 const AUTO_REQUEST_VALIDATION_MODE_NO_REQUEST_VALIDATION          = 'NO_VALIDATION';
 const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH = 'VALIDATION_BEFORE_AUTH';
 const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_AFTER_AUTH';
@@ -297,7 +297,7 @@ const AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_AFTER_AUTH  = 'VALIDATION_
 
 Ejemplo de uso:
 
-```
+```php
 $app = new Application(APP_CONFIG_DIR.'/config.ini');
 $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQUEST_VALIDATION_BEFORE_AUTH);
 ```
@@ -305,17 +305,17 @@ $app->setAutoRequestValidationMode(Application::AUTO_REQUEST_VALIDATION_MODE_REQ
 
 ### Filtrado de parámetros POST|PUT|PATH|DELETE, parámetros de query y URL
 
-Por defecto se aplica un filtro a todos los parámetros que llegan a la aplicación, ya sean por POST, PUT, PATH, DELETE, parámetros de query o URL. El filtro que se aplica por defecto se puede espeficicar en el fichero de config de la aplicación en el campo _defaultInputFilterType_. El valor de ese campo es un número entero equivalente a alguno de los filtros estandar de PHP ([ver documetación de PHP] (http://php.net/manual/en/filter.filters.sanitize.php)). Los valores más comunes para _defaultInputFilterType_ se muestran a continuación:
+Por defecto se aplica un filtro a todos los parámetros que llegan a la aplicación, ya sean por POST, PUT, PATH, DELETE, parámetros de query o URL. El filtro que se aplica por defecto se puede especificar en el fichero de config de la aplicación en el campo _defaultInputFilterType_. El valor de ese campo es un número entero equivalente a alguno de los filtros estandar de PHP ([ver documetación de PHP] (http://php.net/manual/en/filter.filters.sanitize.php)). Los valores más comunes para _defaultInputFilterType_ se muestran a continuación:
 
 - 516 (FILTER_UNSAFE_RAW): No se filtran los parámetros.
 - 522 (FILTER_SANITIZE_FULL_SPECIAL_CHARS): Equivalente a htmlspecialchars().
 - 513 (FILTER_SANITIZE_STRING): Filtra las tags de las cadenas.
  
-Es posbile aplicar filtros específicos a los parámetros emplemando el método __addRequestFilters($paramName, $filters)__, en donde _$paramName_ es el nombre del parámetro que se quiere filtrar y _$filters_ es un array de objetos que deben cumplir con la interfaz __H4D\Leveret\Filter\FilterInterface__ (o closures que aceptan como parámetro un valor y devuelvan el valor filtrado).
+Es posible aplicar filtros específicos a los parámetros empleando el método __addRequestFilters($paramName, $filters)__, en donde _$paramName_ es el nombre del parámetro que se quiere filtrar y _$filters_ es un array de objetos que deben cumplir con la interfaz __H4D\Leveret\Filter\FilterInterface__ (o clousures que aceptan como parámetro un valor y devuelvan el valor filtrado).
 
 Ejemplo:
 
-```
+```php
 $this->registerRoute('POST', '/create/alias')
         ->addRequestFilters('alias', [new Filter1(), new Filter2(), 
                                      function($alias){return strtolower($alias)}]);
@@ -325,7 +325,7 @@ $this->registerRoute('POST', '/create/alias')
          
 El método *run()* es el que se encarga de enrutar las peticiones y proporcionar una respuesta HTTP al cliente.
 
-```
+```php
 $app->run();
 ```    
     
@@ -337,7 +337,7 @@ Desde cualquier método de un controller se puede acceder a la aplicación media
 
 Ejemplo de un controller básico:
 
-```
+```php
 use H4D\Leveret\Application;
 use H4D\Leveret\Application\Controller;
 use H4D\Leveret\Http\Response\Headers;
@@ -392,7 +392,7 @@ En los controller podemos implementar los métodos  *preDispatch()* y *postDispa
  
 ### Otros métodos interesantes
 
-Los controllers disponen de varios métodos de utilidad que pueden ser interantes, algunos de ellos son:
+Los controllers disponen de varios métodos de utilidad que pueden ser interesantes, algunos de ellos son:
 
  - **getApp()**: Devuelve el objeto instancia de \H4D\Leveret\Application.
  - **getLogger()**: Devuelve el Logger registrado en la aplicación (LoggerInterface).
@@ -416,7 +416,7 @@ Cuando necesitemos utilizar una plantilla podremos hacer uso de la vista por def
 
 Para especificar la plantilla que queremos renderizar se empleará el método *render($template)* del objeto aplicación. El único parámetro que admite es la ruta relativa del fichero de la plantilla con respecto a la ruta base de las vistas (definida en el fichero de configuración de la aplicación en la sección views/path)
 
-```
+```php
 $app->render('add.phtml');
 ```
 
@@ -424,10 +424,10 @@ Las plantillas serán normalmente ficheros phtml (aunque podrían ser cualquier 
 
 Ejemplo de una plantilla:
 
-```
+```php
 <html>
 <head>
-    <title><?php echo $title?></title>
+    <title><?php echo $title;?></title>
 </head>
 <body>
 <div style="text-align: center; font-size: 40pt; margin: 40px;">
@@ -456,7 +456,7 @@ Este helper permite traducir cadenas de texto en las vistas.
 
 Ejemplo de uso del helper translate en una vista:
 
-```
+```php
 <h2>Esto es una vista</h2>
 <?php echo $this->translate('Hola %s!', $nombre);?>
 ```
@@ -464,7 +464,7 @@ Ejemplo de uso del helper translate en una vista:
 Para que se hagan las traducciones debemos registrar en la aplicación un servicio de traducción. En el siguiente ejemplo se muestra como se registra un traductor (de tipo gettext, ver [h4d/i18n](https://github.com/h4d/i18n)) como servicio de la aplicación (más info sobre servicios en la sección "_Inyector de dependencias / contenedor de servicios_" ):
 
 
-```
+```php
 // Register Translator as a service
 $app->registerService($app::TRANSLATION_SERVICE_NAME, function () use ($app)
 {
@@ -492,7 +492,7 @@ Este helper permite decorar/localizar las fechas en las vista. Puedes ver los m�
 
 Algunos ejemplos de uso:
 
-```
+```php
 <p>
     Current date and time: <?php echo $this->dateDecorator->dateTime($dateTimeInstance);?>
     Current date: <?php echo $this->dateDecorator->date($dateTimeInstance);?>
@@ -509,13 +509,13 @@ _Partial_ **partial(**_View_ $parentView, _string_ $templateRoute, _array_ $part
 En donde: 
 
 - $parentView: es la vista contenedora.
-- $templateRoute: es la ruta de la platilla del partial.
+- $templateRoute: es la ruta de la plantilla del partial.
 - $partialVars: es una array clave-valor con las variables que se le quieren pasar al partial.
  
  
 Ejemplo de uso en una vista: 
 
-```
+```php
 <div>
     <?php echo $this->partial($this, APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
 </div>
@@ -527,7 +527,7 @@ Es posible utilizar una vista parcial dentro de otra vista parcial sirviéndose 
 
 En la vista principal:
 
-```
+```php
 <div>
     <?php echo $this->partial($this, APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
 </div>
@@ -535,7 +535,7 @@ En la vista principal:
     
 En APP\_VIEWS\_DIR.'/partials/test/partial.phtml' (uso del método **getParent()**):
 
-```
+```php
 <h1>Partial</h1>
 <p>
     <?php echo $this->translate('Hola %s! Esto es un partial.', $nombre);?>
@@ -546,7 +546,7 @@ En APP\_VIEWS\_DIR.'/partials/test/partial.phtml' (uso del método **getParent()
 
 En APP\_VIEWS\_DIR.'/partials/test/internal.phtml'
 
-```
+```php
 <h2>Partial interno</h2>
 <?php echo $this->translate('Hola %s! Soy un partial dentro de otro partial', $nombre);?>
 ```
@@ -554,10 +554,10 @@ En APP\_VIEWS\_DIR.'/partials/test/internal.phtml'
 ##### ¿Cómo se resuelven los nombres de variables dentro de los partials?
 
 1. Si la variable está definida en el partial se usa esa variable.
-2. Si la variable no está definida en el partial y sí en su vista contenedora se utiza la variable de la vista contenedora. 
+2. Si la variable no está definida en el partial y sí en su vista contenedora se utiliza la variable de la vista contenedora. 
 3. Si la variable no está definida en el partial y tampoco en la vista contenedora, se lanza una excepción de renderizado.
 
-__OJO!__ Actualemente un partial interno no "hereda" las variables del partial contedor, sólo las de la vista contenedora.
+__OJO!__ Actualmente un partial interno no "hereda" las variables del partial contenedor, sólo las de la vista contenedora.
 
 
 ## Layouts
@@ -566,7 +566,7 @@ Los layouts son vistas que se pueden emplear como un contenedor de otras vistas.
 
 Para hacer uso de un layout determinado se debe emplear el método de la aplicación **useLayout($template)**, en donde *$template* es la ruta relativa del fichero de la plantilla del layout con respecto a la ruta base de las vistas de la aplicación.
 
-```
+```php
 $app->useLayout('layouts/main.phtml');
 $app->render('add.phtml');
 ```
@@ -575,20 +575,20 @@ $app->render('add.phtml');
 
 Tanto la aplicación como los controllers de Leveret implementan el patrón _publisher_, por lo que pueden publicar eventos mediante el método _publish(Event $event)_.
 
-```
+```php
 $app->publish($myEvent);
 ```
 
 A los eventos de la aplicación pueden subscribirse tantos _listereners/observers/subscribers_ como sea necesario, para ello se utiliza el método _attachSubscriber(SubscriberInterface $subscriber)_. 
 
-```
+```php
 $app->attachSubscriber($mySubscriberOne);
 $app->attachSubscriber($mySubscriberTwo);
 ```
 
 Si se quiere retirar un listener se usaría el método _dettachSubscriber(SubscriberInterface $subscriber)_.
 
-```
+```php
 $app->dettachSubscriber($mySubscriberTwo);
 ```
 
@@ -617,7 +617,7 @@ Para recuperar los servicios registrados el objeto aplicación dispone del méto
 Otros métodos útiles en relación con los servicios son:
 
 - _bool_ **isServiceRegistered(**_string_ **$serviceName)**: Devuelve true o false si el servicio con nombre $serviceName está registrado o no.
-- _ServiceContainerInterface_ **getServiceContainer()**: Devuelve el contendor de servicios de la aplicación.
+- _ServiceContainerInterface_ **getServiceContainer()**: Devuelve el contenedor de servicios de la aplicación.
 - _Application_ **setServiceContainer(**_ServiceContainerInterface_ **$serviceContainer)**: Permite setear un contenedor de servicios para la aplicación.
  
 Las aplicaciones de Leveret tienen un lugar destinado para el registro de servicios, ese lugar es el método **initServices()** de la clase de nuestra aplicación.
@@ -627,17 +627,17 @@ Las aplicaciones de Leveret tienen un lugar destinado para el registro de servic
 
 __Ejemplo:__ Registro de una instancia de la clase *MyService* como un servicio de la aplicación.
 
-```
-        $app->registerService('ServiceName', new MyService());
+```php
+$app->registerService('ServiceName', new MyService());
 ```
 
  
 ### Registro de callables como servicios
 
-Ejemplo: Registro del servicio _'ServiceName'_. Al asignar el valor true al tercer parámetro (_$singleton_) la primera vez que llame a **$app->getService(**_'ServiceName'_**)** se creará una instancia de *MyService* y se devoverá. En llamadas posteriores se devolverá la misma instancia de *MyService*, no se volverá a ejecutar el código del callable. 
+Ejemplo: Registro del servicio _'ServiceName'_. Al asignar el valor true al tercer parámetro (_$singleton_) la primera vez que llame a **$app->getService(**_'ServiceName'_**)** se creará una instancia de *MyService* y se devolverá. En llamadas posteriores se devolverá la misma instancia de *MyService*, no se volverá a ejecutar el código del callable. 
 
 
-```
+```php
 $app->registerService('ServiceName', function ()
 {
     $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
@@ -647,11 +647,11 @@ $app->registerService('ServiceName', function ()
 }, true);
 ```
 
-Si quisiesemos que se creasen diferentes instancias de *MyService* cada vez que llamemos a **$app->getService(**_'ServiceName'_**)** bastaría con cambiar el valor del parámetro $singleton a false.
+Si quisiésemos que se creasen diferentes instancias de *MyService* cada vez que llamemos a **$app->getService(**_'ServiceName'_**)** bastaría con cambiar el valor del parámetro $singleton a false.
 
 __Ejemplo:__ Registro del servicio _'ServiceName'_. Cada vez que se llama a **$app->getService(**_'ServiceName'_**)** se instancia un nuevo objeto de la clase *MyService* y se devuelve.
  
-```
+```php
 $app->registerService('ServiceName', function ()
 {
     $configFile = IniFile::load(APP_CONFIG_DIR . '/sample.ini');
@@ -662,13 +662,13 @@ $app->registerService('ServiceName', function ()
 ```
  
 
-__NOTA:__ El registro de callables tiene una ventaja importante sobre el registro de instancias: el código de instanciación de objetos no se ejecuta si no se llama a **$app->getService(**_'ServiceName'_**)**, por lo tanto, registrar los servicios como callables puede representar un menor tiempo de "bootstraping" de la aplicación y un menor consumo de memoria, dado que sólo se crearán nuevas instancias cuando se haga uso de los servicios, y además la instanción se relalizará en tiempo de ejecución y no en el tiempo de carga de la aplicación.
+__NOTA:__ El registro de callables tiene una ventaja importante sobre el registro de instancias: el código de instanciación de objetos no se ejecuta si no se llama a **$app->getService(**_'ServiceName'_**)**, por lo tanto, registrar los servicios como callables puede representar un menor tiempo de "bootstraping" de la aplicación y un menor consumo de memoria, dado que sólo se crearán nuevas instancias cuando se haga uso de los servicios, y además la instanciación se realizará en tiempo de ejecución y no en el tiempo de carga de la aplicación.
  
 ### Registro pares clave-valor como servicios
  
  Leveret permite el registro de pares clave-valor como servicios del siguiente modo:
  
-```
+```php
  $app->registerService('MyKey', 'MyValue');
 ```
  
@@ -677,7 +677,7 @@ __NOTA:__ El registro de callables tiene una ventaja importante sobre el registr
 
 Al igual que en el resto de casos, para registrar un recurso (resource) como un servicio en nuestra aplicación, haremos uso del método **$app->registerService(** *string* **$serviceName,** *resource* **$resuorce)**
 
-```
+```php
  $app->registerService('MyResource', $myResource);
 ```
 
@@ -685,7 +685,7 @@ Al igual que en el resto de casos, para registrar un recurso (resource) como un 
 
 ## ACLs
 
-Leveret soporta el uso de ACL (access control lists) básicas. Con ellas podemos limitar el acceso a determinados componentes de nuestas aplicación en base a unas reglas que nosotros podemos definir (que deben cumplir con la interfaz *H4D\Leveret\Application\AclInterface*).
+Leveret soporta el uso de ACL (access control lists) básicas. Con ellas podemos limitar el acceso a determinados componentes de nuesta aplicación en base a unas reglas que nosotros podemos definir (que deben cumplir con la interfaz *H4D\Leveret\Application\AclInterface*).
 
 El lugar destinado para el registro de ACLs es el método **initAcls()** de la clase de nuestra aplicación.
 
@@ -713,7 +713,7 @@ Podemos registrar ACLs que se apliquen sobre un controller o determinados action
 
 __Ejemplo:__ Aplicación de la ACL AdminLoggedInRequired (registrada como servicio) sobre el controller *MyAppp\Controller\AdminController*
 
-```
+```php
 $this->registerAclForController($this->getService(AdminLoggedInRequired::class),
                                 'MyAppp\Controller\AdminController');
 ```
@@ -721,7 +721,7 @@ $this->registerAclForController($this->getService(AdminLoggedInRequired::class),
 
 ## Ejemplo completo:
 
-```
+```php
 <?php
     
 use H4D\Leveret\Application;
