@@ -3,6 +3,7 @@
 namespace H4D\Leveret\Application;
 
 use H4D\Leveret\Application\View\Helpers\AbstractHelper;
+use H4D\Leveret\Application\View\RendererInterface;
 use H4D\Leveret\Application\View\ViewAwareInterface;
 use H4D\Leveret\Exception\ViewException;
 use H4D\Patterns\Collections\ArrayCollection;
@@ -10,15 +11,34 @@ use H4D\Template\TemplateTrait;
 
 class View
 {
-    use TemplateTrait;
+    use TemplateTrait
+    {
+        render as templateRender;
+    }
 
     /**
      * @var ArrayCollection
      */
     protected $helpersCollection;
+    /**
+     * @var RendererInterface
+     */
+    protected $renderer;
+    /**
+     * @var array
+     */
+    protected $templateVars = [];
 
-    public function __construct()
+    /**
+     * View constructor.
+     *
+     * @param RendererInterface|null $renderer
+     *
+     * @throws ViewException
+     */
+    public function __construct($renderer = null)
     {
+        $this->renderer = $renderer;
         $this->helpersCollection = new ArrayCollection([]);
     }
 
@@ -90,4 +110,22 @@ class View
         return $this->helpersCollection->get($name);
     }
 
+    /**
+     * @param string $templatePath
+     *
+     * @return string
+     */
+    public function render($templatePath)
+    {
+        if (is_null($this->renderer))
+        {
+            $contents = $this->templateRender($templatePath);
+        }
+        else
+        {
+            $contents = $this->renderer->render($this, $templatePath);
+        }
+
+        return $contents;
+    }
 }
