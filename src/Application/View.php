@@ -24,10 +24,6 @@ class View
      * @var RendererInterface
      */
     protected $renderer;
-    /**
-     * @var array
-     */
-    protected $templateVars = [];
 
     /**
      * View constructor.
