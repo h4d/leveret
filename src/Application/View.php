@@ -3,6 +3,7 @@
 namespace H4D\Leveret\Application;
 
 use H4D\Leveret\Application\View\Helpers\AbstractHelper;
+use H4D\Leveret\Application\View\ViewAwareInterface;
 use H4D\Leveret\Exception\ViewException;
 use H4D\Patterns\Collections\ArrayCollection;
 use H4D\Template\TemplateTrait;
@@ -63,6 +64,10 @@ class View
     {
         if (!$this->helpersCollection->has($helper->getAlias()))
         {
+            if ($helper instanceof ViewAwareInterface)
+            {
+                $helper->setView($this);
+            }
             $this->helpersCollection->set($helper->getAlias(), $helper);
         }
 

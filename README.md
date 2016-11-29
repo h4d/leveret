@@ -504,11 +504,10 @@ Algunos ejemplos de uso:
 
 Se pueden emplear vistas parciales dentro de otras vistas mediante el método __partial__. La firma del método es la siguiente:
 
-_Partial_ **partial(**_View_ $parentView, _string_ $templateRoute, _array_ $partialVars = []**)**
+_Partial_ **partial(**_string_ $templateRoute, _array_ $partialVars = []**)**
 
 En donde: 
 
-- $parentView: es la vista contenedora.
 - $templateRoute: es la ruta de la plantilla del partial.
 - $partialVars: es una array clave-valor con las variables que se le quieren pasar al partial.
  
@@ -517,7 +516,7 @@ Ejemplo de uso en una vista:
 
 ```php
 <div>
-    <?php echo $this->partial($this, APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
+    <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/test.phtml', ['nombre'=>'Pakito']);?>
 </div>
 ```
 
@@ -529,7 +528,7 @@ En la vista principal:
 
 ```php
 <div>
-    <?php echo $this->partial($this, APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
+    <?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/partial.phtml', ['nombre'=>'Pakito']);?>
 </div>
 ```
     
@@ -541,7 +540,7 @@ En APP\_VIEWS\_DIR.'/partials/test/partial.phtml' (uso del método **getParent()
     <?php echo $this->translate('Hola %s! Esto es un partial.', $nombre);?>
 </p>
     
-<?php echo $this->partial($this->getParent(), APP_VIEWS_DIR.'/partials/test/internal.phtml');?>
+<?php echo $this->partial(APP_VIEWS_DIR.'/partials/test/internal.phtml');?>
 ```
 
 En APP\_VIEWS\_DIR.'/partials/test/internal.phtml'
