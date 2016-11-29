@@ -56,6 +56,7 @@ class Application implements PublisherInterface
 
     const TRANSLATION_SERVICE_NAME     = 'Translator';
     const DATE_DECORATION_SERVICE_NAME = 'DateDecorator';
+    const VIEW_RENDERER_SERVICE_NAME   = 'ViewRenderer';
 
     /**
      * @var Router
@@ -213,9 +214,6 @@ class Application implements PublisherInterface
         $this->initRoutes();
         // Init views
         $this->initViews();
-        // Init view helpers
-        $this->initDefaultViewHelpers();
-        $this->initViewHelpers();
     }
 
     /**
@@ -281,8 +279,19 @@ class Application implements PublisherInterface
      */
     protected function initViews()
     {
-        $this->layout = new View();
-        $this->view = new View();
+        $viewRenderer = null;
+        if ($this->isServiceRegistered(self::VIEW_RENDERER_SERVICE_NAME))
+        {
+            $viewRenderer = $this->getService(self::VIEW_RENDERER_SERVICE_NAME);
+        }
+        $this->layout = new View($viewRenderer);
+        $this->view = new View($viewRenderer);
+
+        if (is_null($viewRenderer))
+        {
+            $this->initDefaultViewHelpers();
+            $this->initViewHelpers();
+        }
     }
 
     /**
